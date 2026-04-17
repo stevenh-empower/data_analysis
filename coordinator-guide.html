@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ML Service Coordinators — Visual Guide</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121933;
+    --panel-2: #192147;
+    --ink: #e8ecff;
+    --dim: #9aa4cc;
+    --line: #2a335c;
+    --accent: #7dd3fc;   /* default */
+    --train: #60a5fa;    /* blue */
+    --forecast: #34d399; /* green */
+    --stats: #c084fc;    /* purple */
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --ok: #34d399;
+    --chip: rgba(255,255,255,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    margin: 0;
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    padding: 40px 24px 80px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  header.hero {
+    padding: 28px 30px;
+    background: linear-gradient(135deg, #1a2250 0%, #0e1438 100%);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin-bottom: 28px;
+  }
+  header.hero h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: .2px; }
+  header.hero .sub { color: var(--dim); font-size: 14px; }
+  header.hero .meta {
+    margin-top: 14px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--chip); color: var(--ink);
+    font-size: 12px;
+    border: 1px solid var(--line);
+  }
+
+  h2.section {
+    font-size: 18px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 38px 0 14px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+  }
+
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+  .grid.cards-5 { grid-template-columns: repeat(5, 1fr); }
+  .grid.cards-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.cards-2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 1000px) {
+    .grid.cards-5 { grid-template-columns: repeat(2, 1fr); }
+    .grid.cards-3 { grid-template-columns: 1fr; }
+    .grid.cards-2 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .card .top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 10px;
+  }
+  .card h3 {
+    margin: 0;
+    font-size: 15px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .pill {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: .5px;
+    border: 1px solid transparent;
+  }
+  .pill.train     { color: var(--train);    border-color: rgba(96,165,250,.4);  background: rgba(96,165,250,.1); }
+  .pill.forecast  { color: var(--forecast); border-color: rgba(52,211,153,.4);  background: rgba(52,211,153,.1); }
+  .pill.stats     { color: var(--stats);    border-color: rgba(192,132,252,.4); background: rgba(192,132,252,.1); }
+
+  .kv { display: grid; grid-template-columns: 92px 1fr; gap: 4px 12px; font-size: 13px; }
+  .kv dt { color: var(--dim); }
+  .kv dd { margin: 0; color: var(--ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+
+  /* 24-hour timeline */
+  .timeline {
+    position: relative;
+    height: 92px;
+    margin-top: 8px;
+    padding: 22px 0 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .timeline .track {
+    position: absolute; left: 3%; right: 3%; top: 50%;
+    height: 2px; background: var(--line);
+  }
+  .timeline .tick {
+    position: absolute; top: calc(50% - 4px);
+    width: 2px; height: 10px; background: var(--line);
+  }
+  .timeline .hour-label {
+    position: absolute;
+    transform: translateX(-50%);
+    color: var(--dim); font-size: 11px;
+  }
+  .timeline .hour-label.top { top: 4px; }
+  .timeline .hour-label.bottom { bottom: 4px; }
+  .timeline .event {
+    position: absolute; top: calc(50% - 7px);
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px currentColor;
+    transform: translateX(-50%);
+  }
+  .timeline .event.train    { background: var(--train);    color: var(--train); }
+  .timeline .event.forecast { background: var(--forecast); color: var(--forecast); }
+  .timeline .event.stats    { background: var(--stats);    color: var(--stats); }
+  .timeline .event-label {
+    position: absolute; transform: translateX(-50%);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+    white-space: nowrap;
+  }
+  .timeline .event-label.above { top: 3px; }
+  .timeline .event-label.below { bottom: 3px; }
+
+  /* Procedure steps */
+  ol.steps {
+    list-style: none; counter-reset: s; padding: 0; margin: 0;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  }
+  @media (max-width: 1000px) { ol.steps { grid-template-columns: 1fr 1fr; } }
+  ol.steps li {
+    counter-increment: s;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 12px 12px 40px;
+    font-size: 13px;
+    color: var(--ink);
+    position: relative;
+  }
+  ol.steps li::before {
+    content: counter(s);
+    position: absolute; left: 10px; top: 10px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: #0b1020;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px;
+  }
+  ol.steps li b { color: #cfe0ff; }
+
+  /* Bar charts */
+  .chart {
+    margin-top: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px 8px;
+  }
+  .chart h4 {
+    margin: 0 0 10px; font-size: 12px;
+    color: var(--dim); letter-spacing: .4px; text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .bars {
+    display: grid; grid-template-columns: repeat(28, 1fr); gap: 2px;
+    align-items: end; height: 120px;
+  }
+  .bars.cols-7 { grid-template-columns: repeat(7, 1fr); height: 140px; gap: 6px; }
+  .bar {
+    position: relative;
+    border-radius: 3px 3px 0 0;
+    background: var(--accent);
+    min-height: 2px;
+    transition: opacity .15s;
+  }
+  .bar.train    { background: linear-gradient(180deg, var(--train)    0%, rgba(96,165,250,.3)  100%); }
+  .bar.forecast { background: linear-gradient(180deg, var(--forecast) 0%, rgba(52,211,153,.3)  100%); }
+  .bar.stats    { background: linear-gradient(180deg, var(--stats)    0%, rgba(192,132,252,.3) 100%); }
+  .bar.today { outline: 2px solid var(--warn); outline-offset: 0; border-radius: 4px; }
+  .bar-label {
+    position: absolute; bottom: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px; color: var(--dim);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .bars.cols-7 .bar-value {
+    position: absolute; top: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px; color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .chart-legend {
+    margin-top: 22px; font-size: 11px; color: var(--dim);
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+
+  /* Summary table */
+  table.summary {
+    width: 100%; border-collapse: collapse;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden;
+  }
+  table.summary th, table.summary td {
+    padding: 10px 14px; text-align: left; font-size: 13px;
+    border-bottom: 1px solid var(--line);
+  }
+  table.summary th {
+    background: var(--panel-2);
+    color: var(--dim); text-transform: uppercase;
+    font-size: 11px; letter-spacing: .5px;
+    font-weight: 600;
+  }
+  table.summary tr:last-child td { border-bottom: none; }
+  table.summary td code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--chip); padding: 2px 6px; border-radius: 4px; font-size: 12px;
+  }
+
+  /* Out-of-sequence flow */
+  .oos-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .oos-wrap h3 { margin: 0 0 6px; font-size: 16px; }
+  .oos-wrap .lede { color: var(--dim); font-size: 13.5px; margin-bottom: 18px; max-width: 820px; }
+
+  .flow {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px;
+    align-items: stretch;
+  }
+  @media (max-width: 1000px) {
+    .flow { grid-template-columns: 1fr; }
+    .flow .arrow { transform: rotate(90deg); justify-self: center; padding: 6px 0; }
+  }
+  .flow-box {
+    background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 14px;
+  }
+  .flow-box h5 {
+    margin: 0 0 8px; font-size: 12px; letter-spacing: .5px;
+    text-transform: uppercase; color: var(--dim);
+  }
+  .flow-box ul {
+    margin: 0; padding: 0; list-style: none;
+  }
+  .flow-box li {
+    padding: 8px 10px;
+    margin: 6px 0;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .flow-box li code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px; color: #cfe0ff;
+  }
+  .flow-box.trigger li b { color: var(--warn); }
+  .flow-box.action  li b { color: var(--accent); }
+  .flow-box.effect  li b { color: var(--ok); }
+  .arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--dim); font-size: 20px;
+  }
+
+  /* 48hr rule blocks */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+  @media (max-width: 1000px) { .rules { grid-template-columns: 1fr; } }
+  .rule {
+    background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .rule.honors { border-left: 3px solid var(--forecast); }
+  .rule.ignores { border-left: 3px solid var(--stats); }
+  .rule h4 { margin: 0 0 6px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .rule p { margin: 6px 0; font-size: 13.5px; color: var(--ink); }
+  .rule .note { color: var(--dim); font-size: 12.5px; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+    font-weight: 700;
+  }
+  .badge.honors  { color: #0b1020; background: var(--forecast); }
+  .badge.ignores { color: #0b1020; background: var(--stats); }
+
+  /* Aging timeline */
+  .age-viz {
+    margin-top: 16px; padding: 18px;
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px;
+  }
+  .age-viz h4 { margin: 0 0 10px; font-size: 14px; }
+  .age-bar {
+    position: relative; height: 36px; border-radius: 6px;
+    background: linear-gradient(90deg,
+      var(--ok) 0%, var(--ok) 22%,
+      var(--warn) 22%, var(--warn) 78%,
+      var(--danger) 78%, var(--danger) 100%);
+    overflow: hidden;
+  }
+  .age-labels { position: relative; height: 22px; margin-top: 4px; font-size: 11px; color: var(--dim); }
+  .age-labels span { position: absolute; transform: translateX(-50%); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .age-notes { margin-top: 10px; font-size: 12.5px; color: var(--dim); }
+
+  code.inline {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--chip); padding: 1px 6px; border-radius: 4px; font-size: 12.5px;
+  }
+
+  .legend-row {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px;
+    font-size: 12px; color: var(--dim);
+  }
+  .legend-row .dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
+  }
+  .dot.train    { background: var(--train); }
+  .dot.forecast { background: var(--forecast); }
+  .dot.stats    { background: var(--stats); }
+  .dot.today    { background: var(--warn); }
+
+  footer { color: var(--dim); font-size: 12px; text-align: center; margin-top: 42px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>ML Service Coordinators — Visual Guide</h1>
+  <div class="sub">Five EventBridge-triggered coordinators that decide <em>what</em> gets trained or forecast <em>when</em>. Schedule previews as of <b>2026-04-17</b> (dev database).</div>
+  <div class="meta">
+    <span class="tag">Timezone: America/New_York</span>
+    <span class="tag">Production only</span>
+    <span class="tag">Schedule group: ml-service-coordinators</span>
+    <span class="tag">Two Lambdas, Node 20, 10-min timeout</span>
+  </div>
+</header>
+
+<h2 class="section">1 · Daily fire schedule</h2>
+<div class="timeline" aria-label="24-hour timeline of coordinator fires">
+  <div class="track"></div>
+  <!-- hour ticks at 0,6,12,18,24 -->
+  <div class="tick" style="left: 3%"></div>
+  <div class="tick" style="left: 27.25%"></div>
+  <div class="tick" style="left: 51.5%"></div>
+  <div class="tick" style="left: 75.75%"></div>
+  <div class="tick" style="left: 97%"></div>
+
+  <div class="hour-label bottom" style="left: 3%">00:00</div>
+  <div class="hour-label bottom" style="left: 27.25%">06:00</div>
+  <div class="hour-label bottom" style="left: 51.5%">12:00</div>
+  <div class="hour-label bottom" style="left: 75.75%">18:00</div>
+  <div class="hour-label bottom" style="left: 97%">24:00</div>
+
+  <!-- Events (position = 3% + (hour/24)*94%) -->
+  <!-- 04:00 config_forecast -->
+  <div class="event forecast" style="left: 19.17%"></div>
+  <div class="event-label above" style="left: 19.17%; color: var(--forecast);">04:00 config_forecast</div>
+  <!-- 04:05 dense_forecast (slightly right) -->
+  <div class="event forecast" style="left: 19.5%"></div>
+  <div class="event-label below" style="left: 19.5%; color: var(--forecast);">04:05 dense_forecast</div>
+  <!-- 13:00 stats -->
+  <div class="event stats" style="left: 53.92%"></div>
+  <div class="event-label above" style="left: 53.92%; color: var(--stats);">13:00 stats</div>
+  <!-- 23:00 config_train -->
+  <div class="event train" style="left: 93.08%"></div>
+  <div class="event-label above" style="left: 90.5%; color: var(--train);">23:00 config_train</div>
+  <!-- 23:05 dense_train -->
+  <div class="event train" style="left: 93.4%"></div>
+  <div class="event-label below" style="left: 93.4%; color: var(--train);">23:05 dense_train</div>
+</div>
+<div class="legend-row">
+  <span><span class="dot train"></span>training</span>
+  <span><span class="dot forecast"></span>forecasting</span>
+  <span><span class="dot stats"></span>stats</span>
+  <span style="color: var(--dim)">Minute offsets (+5m) prevent config and dense from fighting the DB connection pool.</span>
+</div>
+
+<h2 class="section">2 · Coordinators at a glance</h2>
+<div class="grid cards-5">
+
+  <div class="card">
+    <div class="top">
+      <h3>config_train</h3>
+      <span class="pill train">Train</span>
+    </div>
+    <dl class="kv">
+      <dt>Cycle</dt><dd>28 days</dd>
+      <dt>Fires</dt><dd>23:00 daily</dd>
+      <dt>Bucket</dt><dd>(pid+sid+DOY) % 28</dd>
+      <dt>Skip</dt><dd>queued/running tracker</dd>
+      <dt>Today</dt><dd>215 targets</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>dense_train</h3>
+      <span class="pill train">Train</span>
+    </div>
+    <dl class="kv">
+      <dt>Cycle</dt><dd>28 days</dd>
+      <dt>Fires</dt><dd>23:05 daily</dd>
+      <dt>Bucket</dt><dd>(pid+sid+DOY) % 28</dd>
+      <dt>Skip</dt><dd>queued/running tracker</dd>
+      <dt>Today</dt><dd>146 targets</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>stats</h3>
+      <span class="pill stats">Train</span>
+    </div>
+    <dl class="kv">
+      <dt>Cycle</dt><dd>7 days</dd>
+      <dt>Fires</dt><dd>13:00 daily</dd>
+      <dt>Bucket</dt><dd>greedy bin-pack</dd>
+      <dt>Skip</dt><dd>queued/running tracker</dd>
+      <dt>Today</dt><dd>6 seg / 10,904 rows</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>config_forecast</h3>
+      <span class="pill forecast">Forecast</span>
+    </div>
+    <dl class="kv">
+      <dt>Cycle</dt><dd>7 days</dd>
+      <dt>Fires</dt><dd>04:00 daily</dd>
+      <dt>Bucket</dt><dd>(pid+sid+DOY) % 7</dd>
+      <dt>Skip</dt><dd>&lt;48h fc OR queued</dd>
+      <dt>Today</dt><dd>806 scheduled / 793 enqueue</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>dense_forecast</h3>
+      <span class="pill forecast">Forecast</span>
+    </div>
+    <dl class="kv">
+      <dt>Cycle</dt><dd>7 days</dd>
+      <dt>Fires</dt><dd>04:05 daily</dd>
+      <dt>Bucket</dt><dd>(pid+sid+DOY) % 7</dd>
+      <dt>Skip</dt><dd>&lt;48h fc OR queued</dd>
+      <dt>Today</dt><dd>356 scheduled / 62 enqueue</dd>
+    </dl>
+  </div>
+</div>
+
+<h2 class="section">3 · Shared procedure every run</h2>
+<ol class="steps">
+  <li><b>Sweep abandoned trackers.</b> Mark <code class="inline">queued/running</code> rows older than 12h as <code class="inline">failed</code>, preventing a crashed worker from permanently blocking the skip filter.</li>
+  <li><b>Select today's bucket</b> for the coordinator's pattern.</li>
+  <li><b>Apply skip filters</b> (per-pattern — see cards above).</li>
+  <li><b>Enqueue</b> to the appropriate SQS queue with <code class="inline">submitted_by = 'coordinator'</code>.</li>
+  <li><b>Refresh <code>forecast_priority</code></b> materialized view so EmpowerFresh picks up new work immediately.</li>
+</ol>
+
+<h2 class="section">4 · Load distribution</h2>
+
+<div class="grid cards-2">
+  <div class="card">
+    <div class="top">
+      <h3>config_train · 28-day cycle</h3>
+      <span class="pill train">5,841 total</span>
+    </div>
+    <div class="chart">
+      <h4><span>targets / day</span><span>avg 209 · min 190 · max 222</span></h4>
+      <div class="bars" id="bars-config-train"></div>
+      <div class="chart-legend">
+        <span><span class="dot today"></span>today (2026-04-17)</span>
+        <span>Average ~209/day. Load is well balanced by modulo hash.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>dense_train · 28-day cycle</h3>
+      <span class="pill train">3,988 total</span>
+    </div>
+    <div class="chart">
+      <h4><span>targets / day</span><span>avg 142 · min 123 · max 158</span></h4>
+      <div class="bars" id="bars-dense-train"></div>
+      <div class="chart-legend">
+        <span><span class="dot today"></span>today (2026-04-17)</span>
+        <span>HIGH / ULTRA velocity tier only.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid cards-3" style="margin-top: 16px;">
+  <div class="card">
+    <div class="top">
+      <h3>config_forecast · 7-day</h3>
+      <span class="pill forecast">5,709 total</span>
+    </div>
+    <div class="chart">
+      <h4><span>targets / day</span><span>today: 806 scheduled, 13 skipped</span></h4>
+      <div class="bars cols-7" id="bars-config-fc"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>dense_forecast · 7-day</h3>
+      <span class="pill forecast">1,989 total</span>
+    </div>
+    <div class="chart">
+      <h4><span>targets / day</span><span>today: 356 scheduled, 294 skipped (83%)</span></h4>
+      <div class="bars cols-7" id="bars-dense-fc"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="top">
+      <h3>stats · 7-day</h3>
+      <span class="pill stats">48 segs · 81,583 rows</span>
+    </div>
+    <div class="chart">
+      <h4><span>rows / cycle day</span><span>greedy bin-pack</span></h4>
+      <div class="bars cols-7" id="bars-stats"></div>
+      <div class="chart-legend">
+        <span style="color: var(--dim)">Cycle day 0 holds the single heaviest segment alone — classic greedy bin-pack tail.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="section">5 · Cross-cycle load summary (2026-04-17)</h2>
+<table class="summary">
+  <thead>
+    <tr><th>Pattern</th><th>Cycle</th><th>Per-run target (today)</th><th>After skip filters</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>config_train</code></td><td>28 d</td><td>215</td><td>—</td></tr>
+    <tr><td><code>dense_train</code></td><td>28 d</td><td>146</td><td>—</td></tr>
+    <tr><td><code>stats</code></td><td>7 d</td><td>6 segments · 10,904 rows</td><td>post-filter only</td></tr>
+    <tr><td><code>config_forecast</code></td><td>7 d</td><td>806</td><td>793</td></tr>
+    <tr><td><code>dense_forecast</code></td><td>7 d</td><td>356</td><td>62</td></tr>
+  </tbody>
+</table>
+
+<h2 class="section">6 · Out-of-sequence training &amp; forecasting</h2>
+<div class="oos-wrap">
+  <h3>When the coordinators aren't the only ones enqueueing work</h3>
+  <p class="lede">
+    Data-driven training and forecasting fires whenever a file import or user action <b>changes the shape of the historical data or the forecast horizon</b>.
+    These runs are enqueued out-of-sequence, independent of the EventBridge cron. The chain is always
+    <b>trigger → job type → downstream effect</b>, with a careful interaction against the normal coordinator sequence.
+  </p>
+
+  <div class="flow">
+    <div class="flow-box trigger">
+      <h5>Trigger (data change)</h5>
+      <ul>
+        <li><b>Product merge</b> — reshapes historical sales → <code>train</code></li>
+        <li><b>New product activated</b> — introduces new series → <code>train</code></li>
+        <li><b>New price file imported</b> — changes forecast feature → <code>forecast</code></li>
+        <li><b>Horizon / series change</b> via user action → <code>forecast</code></li>
+      </ul>
+    </div>
+    <div class="arrow">→</div>
+    <div class="flow-box action">
+      <h5>Out-of-sequence job</h5>
+      <ul>
+        <li><b>Training</b> refresh enqueued immediately</li>
+        <li><b>Forecast</b> refresh enqueued immediately</li>
+        <li>Runs through the same SQS → worker path as coordinator jobs (same <code>ai_job_tracker</code>, same ML worker)</li>
+      </ul>
+    </div>
+    <div class="arrow">→</div>
+    <div class="flow-box effect">
+      <h5>Downstream</h5>
+      <ul>
+        <li><b>Training complete</b> → <b>auto-enqueues a forecast</b> using the new model</li>
+        <li><b>Forecast complete</b> → writes <code>ai_forecast_performance</code> row with fresh <code>forecast_created_at</code></li>
+        <li>Fresh <code>forecast_created_at</code> is the hook that lets coordinators skip the next scheduled run (next section)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rules">
+    <div class="rule honors">
+      <h4><span class="badge honors">Honors 48h rule</span> Forecast coordinators</h4>
+      <p><b>config_forecast</b> and <b>dense_forecast</b> will <b>skip today's bucket</b> for a <code class="inline">(customer, store, product)</code> if <code class="inline">ai_forecast_performance</code> shows a row for the latest model with <code class="inline">forecast_created_at &gt; NOW() - 48h</code>.</p>
+      <p class="note">
+        Effect: if an out-of-sequence forecast lands within 48h of the scheduled slot, it <b>replaces</b> that slot and the coordinator pass is a no-op for that series.
+        The forecast then waits a full cycle until the next bucket day — it could therefore <b>age to 9 days at most</b> (7-day cycle + up to 2 days of replacement window). Rare, but possible.
+      </p>
+    </div>
+
+    <div class="rule ignores">
+      <h4><span class="badge ignores">Ignores 48h rule</span> Training + stats coordinators</h4>
+      <p><b>config_train</b>, <b>dense_train</b>, and <b>stats</b> <b>always refresh on schedule</b> regardless of any out-of-sequence run that happened in the last 48 hours.</p>
+      <p class="note">
+        Why:
+        <b>stats</b> refreshes across products — it can't skip one individual job without unbalancing the bin-packed batch.
+        <b>train</b> has a 28-day window which is too long to ever want to skip a scheduled slot.
+        The <em>only</em> reason a training or stats job is not enqueued at its normal run time is that the <code class="inline">ai_job_tracker</code> already has a <code class="inline">queued</code> or <code class="inline">running</code> row for it.
+      </p>
+    </div>
+  </div>
+
+  <div class="age-viz">
+    <h4>Forecast age after a timely out-of-sequence replacement (forecasts only)</h4>
+    <div class="age-bar" aria-label="Forecast age timeline from 0 to 9 days"></div>
+    <div class="age-labels">
+      <span style="left: 0%">0 d</span>
+      <span style="left: 22%">~2 d (skip window)</span>
+      <span style="left: 50%">7 d (normal max)</span>
+      <span style="left: 100%">9 d (absolute max)</span>
+    </div>
+    <div class="age-notes">
+      Green = typical freshness. Amber = normal cycle tail. Red = possible but unlikely upper bound when an out-of-sequence refresh lands &lt;48h before the scheduled bucket day and no further triggers arrive during the following 7-day cycle.
+    </div>
+  </div>
+</div>
+
+<footer>
+  Generated from <code class="inline">coordinator-schedules.md</code> · preview data snapshot: 2026-04-17 · regenerate with <code class="inline">python cli.py → Coordinators → Preview coordinator schedule</code>.
+</footer>
+
+</div>
+
+<script>
+  // ---- Bar chart data ----
+  const configTrain = [215,220,207,199,196,197,201,190,206,217,220,216,191,195,207,211,211,211,216,217,222,211,206,215,209,217,209,209];
+  const denseTrain  = [146,152,151,158,137,145,153,134,146,146,133,133,150,140,134,142,147,143,149,146,140,152,123,134,129,141,140,144];
+  const configFc    = [806,824,826,814,825,803,811];
+  const denseFc     = [356,269,262,261,271,286,284];
+  const statsRows   = [10904,10903,10907,10904,10915,10904,16146]; // cycle day 1..6, 0
+
+  function renderBars(id, data, cls, opts = {}) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const max = Math.max(...data);
+    data.forEach((v, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'bar ' + cls + (opts.todayIndex === i ? ' today' : '');
+      bar.style.height = Math.max(2, (v / max) * 100) + '%';
+      bar.title = (opts.labels ? opts.labels[i] : ('+' + i + 'd')) + ' · ' + v.toLocaleString();
+      if (opts.showValues) {
+        const vlabel = document.createElement('span');
+        vlabel.className = 'bar-value';
+        vlabel.textContent = v.toLocaleString();
+        bar.appendChild(vlabel);
+      }
+      if (opts.showLabels) {
+        const label = document.createElement('span');
+        label.className = 'bar-label';
+        label.textContent = opts.labels ? opts.labels[i] : ('+' + i);
+        bar.appendChild(label);
+      }
+      el.appendChild(bar);
+    });
+  }
+
+  // 28-day train charts: today = index 0
+  renderBars('bars-config-train', configTrain, 'train', { todayIndex: 0 });
+  renderBars('bars-dense-train',  denseTrain,  'train', { todayIndex: 0 });
+
+  // 7-day forecast charts: today = index 0, show values
+  const fcLabels = ['today','+1d','+2d','+3d','+4d','+5d','+6d'];
+  renderBars('bars-config-fc', configFc, 'forecast', { todayIndex: 0, showValues: true, showLabels: true, labels: fcLabels });
+  renderBars('bars-dense-fc',  denseFc,  'forecast', { todayIndex: 0, showValues: true, showLabels: true, labels: fcLabels });
+
+  // Stats: labels by cycle day (1..6 then 0)
+  const statsLabels = ['cycle 1','cycle 2','cycle 3','cycle 4','cycle 5','cycle 6','cycle 0'];
+  renderBars('bars-stats', statsRows, 'stats', { todayIndex: 0, showValues: true, showLabels: true, labels: statsLabels });
+</script>
+
+</body>
+</html>
