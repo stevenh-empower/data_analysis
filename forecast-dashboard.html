@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forecast Performance: AI vs Legacy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+.header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); color:white; padding:32px 40px; }
+.header h1 { font-size:28px; font-weight:700; margin-bottom:4px; }
+.header p { opacity:0.8; font-size:14px; }
+.container { max-width:1440px; margin:0 auto; padding:24px; }
+.cards { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:24px; }
+.card { background:white; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); text-align:center; }
+.card .number { font-size:32px; font-weight:700; color:#0f3460; }
+.card .label { font-size:12px; color:#666; margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+.card.highlight { background:linear-gradient(135deg,#0f3460,#1a5276); color:white; }
+.card.highlight .number { color:#7dd87d; }
+.card.highlight .label { color:rgba(255,255,255,0.8); }
+.section { background:white; border-radius:12px; padding:24px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.section h2 { font-size:18px; margin-bottom:16px; color:#1a1a2e; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { background:#f8f9fa; padding:10px 12px; text-align:left; font-weight:600; border-bottom:2px solid #dee2e6; }
+td { padding:8px 12px; border-bottom:1px solid #eee; }
+.bar-container { display:flex; height:24px; border-radius:6px; overflow:hidden; margin:2px 0; }
+.bar-ai { background:#28a745; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:600; }
+.bar-legacy { background:#dc3545; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:600; }
+.bar-tie { background:#6c757d; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:600; }
+.heatmap { width:100%; border-collapse:collapse; font-size:13px; }
+.heatmap th { background:#f8f9fa; padding:10px 12px; text-align:center; font-weight:600; border-bottom:2px solid #dee2e6; }
+.heatmap td { padding:10px 12px; text-align:center; font-weight:600; border-bottom:1px solid #eee; }
+.heatmap td.label-cell { text-align:left; font-weight:600; background:#fafafa; }
+.tab-container { display:flex; gap:4px; margin-bottom:16px; }
+.tab { padding:8px 16px; border:1px solid #dee2e6; border-radius:8px 8px 0 0; background:#f8f9fa; cursor:pointer; font-size:13px; font-weight:500; }
+.tab.active { background:#0f3460; color:white; border-color:#0f3460; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.badge { padding:2px 8px; border-radius:4px; font-weight:600; font-size:12px; }
+.badge-win { background:#d4edda; color:#155724; }
+.badge-lose { background:#f8d7da; color:#721c24; }
+.chart-container { position:relative; height:320px; }
+a {color: #ADD8E6; }
+a:hover {color: white; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Forecast Performance Dashboard</h1>
+<p>AI vs Legacy — Head-to-Head on 4,637 Overlapping Items, Segmented by Velocity Tier & Demand Segment</p>
+<a href="https://raw.githubusercontent.com/stevenh-empower/data_analysis/main/forecast_comparison.xlsx" download>Download Excel Sheet</a>
+</div>
+<div class="container">
+
+<div class="cards">
+<div class="card"><div class="number">4,786</div><div class="label">Legacy Items</div></div>
+<div class="card"><div class="number">10,143</div><div class="label">AI Items</div></div>
+<div class="card"><div class="number">4,637</div><div class="label">Overlap</div></div>
+<div class="card highlight"><div class="number">+5,506</div><div class="label">New AI Coverage</div></div>
+<div class="card"><div class="number">149</div><div class="label">Legacy Only</div></div>
+</div>
+
+<!-- OVERALL -->
+<div class="section">
+<h2>Overall Head-to-Head Win Rate</h2>
+<table>
+<tr><th>Metric</th><th style="width:45%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th></tr>
+<tr><td><strong>MAE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:85.98231615268492%">86%</div>
+
+<div class="bar-legacy" style="width:13.996118179857667%">14%</div>
+</div></td>
+<td>3,987</td><td>649</td><td>1</td>
+<td><span class="badge badge-win">86.0%</span></td></tr><tr><td><strong>RMSE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:91.00711667026094%">91%</div>
+
+<div class="bar-legacy" style="width:8.992883329739056%">9%</div>
+</div></td>
+<td>4,220</td><td>417</td><td>0</td>
+<td><span class="badge badge-win">91.0%</span></td></tr><tr><td><strong>R²</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:94.62390945531715%">95%</div>
+
+<div class="bar-legacy" style="width:5.3760905446828575%">5%</div>
+</div></td>
+<td>4,013</td><td>228</td><td>0</td>
+<td><span class="badge badge-win">94.6%</span></td></tr><tr><td><strong>MAPE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:83.07402168788308%">83%</div>
+
+<div class="bar-legacy" style="width:16.925978312116925%">17%</div>
+</div></td>
+<td>3,524</td><td>718</td><td>0</td>
+<td><span class="badge badge-win">83.1%</span></td></tr><tr><td><strong>% Within 2 Cases</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:26.116023290920854%">26%</div>
+<div class="bar-tie" style="width:68.55725684709941%">69%</div>
+<div class="bar-legacy" style="width:5.326719861979728%">5%</div>
+</div></td>
+<td>1,211</td><td>247</td><td>3,179</td>
+<td><span class="badge badge-lose">26.1%</span></td></tr></table></div>
+<div class="section">
+<h2>AI Win % Heatmap</h2>
+<div class="tab-container">
+<div class="tab active" onclick="switchTab('velocity')">By Velocity Tier</div>
+<div class="tab" onclick="switchTab('segment')">By Demand Segment</div>
+</div>
+
+<div id="tab-velocity" class="tab-content active">
+<table class="heatmap">
+<tr><th style="text-align:left">Velocity Tier</th><th>n</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE</th><th>% Within 2 Cases</th></tr><tr><td class="label-cell">ULTRA</td><td>104</td><td style="background:#c6efce;color:#006100">97.1%</td><td style="background:#c6efce;color:#006100">97.1%</td><td style="background:#c6efce;color:#006100">95.6%</td><td style="background:#c6efce;color:#006100">91.2%</td><td style="background:#ffc7ce;color:#9c0006">52.9%</td></tr><tr><td class="label-cell">HIGH</td><td>339</td><td style="background:#c6efce;color:#006100">93.5%</td><td style="background:#c6efce;color:#006100">93.5%</td><td style="background:#c6efce;color:#006100">93.2%</td><td style="background:#c6efce;color:#006100">89.5%</td><td style="background:#ffc7ce;color:#9c0006">42.5%</td></tr><tr><td class="label-cell">MEDIUM</td><td>1,569</td><td style="background:#c6efce;color:#006100">93.8%</td><td style="background:#c6efce;color:#006100">94.8%</td><td style="background:#c6efce;color:#006100">95.6%</td><td style="background:#c6efce;color:#006100">90.8%</td><td style="background:#ffc7ce;color:#9c0006">19.7%</td></tr><tr><td class="label-cell">LOW</td><td>2,625</td><td style="background:#fff2cc;color:#7f6003">79.9%</td><td style="background:#c6efce;color:#006100">88.2%</td><td style="background:#c6efce;color:#006100">94.2%</td><td style="background:#fff2cc;color:#7f6003">77.1%</td><td style="background:#ffc7ce;color:#9c0006">26.8%</td></tr></table></div><div id="tab-segment" class="tab-content">
+<table class="heatmap">
+<tr><th style="text-align:left">Demand Segment</th><th>n</th><th>MAE</th><th>RMSE</th><th>R²</th><th>MAPE</th><th>% Within 2 Cases</th></tr><tr><td class="label-cell">HIGH_ERRATIC</td><td>84</td><td style="background:#c6efce;color:#006100">88.1%</td><td style="background:#c6efce;color:#006100">90.5%</td><td style="background:#c6efce;color:#006100">93.8%</td><td style="background:#c6efce;color:#006100">92.5%</td><td style="background:#ffc7ce;color:#9c0006">41.7%</td></tr><tr><td class="label-cell">HIGH_INTERMITTENT</td><td>23</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">92.3%</td><td style="background:#c6efce;color:#006100">92.3%</td><td style="background:#ffc7ce;color:#9c0006">34.8%</td></tr><tr><td class="label-cell">HIGH_SMOOTH</td><td>222</td><td style="background:#c6efce;color:#006100">94.6%</td><td style="background:#c6efce;color:#006100">93.7%</td><td style="background:#c6efce;color:#006100">92.8%</td><td style="background:#c6efce;color:#006100">88.3%</td><td style="background:#ffc7ce;color:#9c0006">42.3%</td></tr><tr><td class="label-cell">HIGH_SPARSE</td><td>10</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">88.9%</td><td style="background:#fff2cc;color:#7f6003">70.0%</td></tr><tr><td class="label-cell">LOW_ERRATIC</td><td>219</td><td style="background:#c6efce;color:#006100">87.7%</td><td style="background:#c6efce;color:#006100">88.6%</td><td style="background:#c6efce;color:#006100">92.4%</td><td style="background:#c6efce;color:#006100">89.1%</td><td style="background:#ffc7ce;color:#9c0006">27.9%</td></tr><tr><td class="label-cell">LOW_INTERMITTENT</td><td>1,229</td><td style="background:#fff2cc;color:#7f6003">73.7%</td><td style="background:#c6efce;color:#006100">86.0%</td><td style="background:#c6efce;color:#006100">93.2%</td><td style="background:#fff2cc;color:#7f6003">61.9%</td><td style="background:#ffc7ce;color:#9c0006">23.9%</td></tr><tr><td class="label-cell">LOW_SMOOTH</td><td>1,056</td><td style="background:#c6efce;color:#006100">84.3%</td><td style="background:#c6efce;color:#006100">90.2%</td><td style="background:#c6efce;color:#006100">96.1%</td><td style="background:#c6efce;color:#006100">93.9%</td><td style="background:#ffc7ce;color:#9c0006">30.7%</td></tr><tr><td class="label-cell">LOW_SPARSE</td><td>121</td><td style="background:#c6efce;color:#006100">90.1%</td><td style="background:#c6efce;color:#006100">91.7%</td><td style="background:#c6efce;color:#006100">87.7%</td><td style="background:#ffc7ce;color:#9c0006">38.3%</td><td style="background:#ffc7ce;color:#9c0006">19.8%</td></tr><tr><td class="label-cell">MEDIUM_ERRATIC</td><td>400</td><td style="background:#c6efce;color:#006100">87.5%</td><td style="background:#c6efce;color:#006100">89.8%</td><td style="background:#c6efce;color:#006100">94.9%</td><td style="background:#c6efce;color:#006100">90.5%</td><td style="background:#ffc7ce;color:#9c0006">18.2%</td></tr><tr><td class="label-cell">MEDIUM_INTERMITTENT</td><td>247</td><td style="background:#c6efce;color:#006100">92.7%</td><td style="background:#c6efce;color:#006100">95.5%</td><td style="background:#c6efce;color:#006100">86.8%</td><td style="background:#c6efce;color:#006100">84.3%</td><td style="background:#ffc7ce;color:#9c0006">9.3%</td></tr><tr><td class="label-cell">MEDIUM_SMOOTH</td><td>870</td><td style="background:#c6efce;color:#006100">96.8%</td><td style="background:#c6efce;color:#006100">96.7%</td><td style="background:#c6efce;color:#006100">97.9%</td><td style="background:#c6efce;color:#006100">92.6%</td><td style="background:#ffc7ce;color:#9c0006">23.1%</td></tr><tr><td class="label-cell">MEDIUM_SPARSE</td><td>52</td><td style="background:#c6efce;color:#006100">98.1%</td><td style="background:#c6efce;color:#006100">98.1%</td><td style="background:#c6efce;color:#006100">95.2%</td><td style="background:#c6efce;color:#006100">81.0%</td><td style="background:#ffc7ce;color:#9c0006">23.1%</td></tr><tr><td class="label-cell">ULTRA_ERRATIC</td><td>7</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td></tr><tr><td class="label-cell">ULTRA_INTERMITTENT</td><td>24</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">100.0%</td><td style="background:#c6efce;color:#006100">83.3%</td><td style="background:#c6efce;color:#006100">83.3%</td><td style="background:#ffc7ce;color:#9c0006">58.3%</td></tr><tr><td class="label-cell">ULTRA_SMOOTH</td><td>73</td><td style="background:#c6efce;color:#006100">95.9%</td><td style="background:#c6efce;color:#006100">95.9%</td><td style="background:#c6efce;color:#006100">97.3%</td><td style="background:#c6efce;color:#006100">91.8%</td><td style="background:#ffc7ce;color:#9c0006">46.6%</td></tr></table></div></div>
+<div class="grid2">
+<div class="section">
+<h2>Coverage by Velocity Tier</h2>
+<div class="chart-container"><canvas id="covVelocityChart"></canvas></div>
+</div>
+<div class="section">
+<h2>MAE Improvement by Velocity Tier</h2>
+<div class="chart-container"><canvas id="maeVelocityChart"></canvas></div>
+</div>
+</div>
+<div class="section">
+<h2>Detailed Breakdown by Velocity Tier</h2>
+<div class="tab-container"><div class="tab active" onclick="switchTierTab('ULTRA')">ULTRA</div><div class="tab" onclick="switchTierTab('HIGH')">HIGH</div><div class="tab" onclick="switchTierTab('MEDIUM')">MEDIUM</div><div class="tab" onclick="switchTierTab('LOW')">LOW</div></div><div id="tier-ULTRA" class="tab-content active"><table><tr><th>Metric</th><th style="width:40%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th><th>Legacy Mean</th><th>AI Mean</th></tr><tr><td><strong>MAE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:97.11538461538461%">97%</div>
+
+
+</div></td>
+<td>101</td><td>3</td><td>0</td>
+<td><span class="badge badge-win">97.1%</span></td>
+<td>24.7307</td><td>14.9070</td></tr><tr><td><strong>RMSE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:97.11538461538461%">97%</div>
+
+
+</div></td>
+<td>101</td><td>3</td><td>0</td>
+<td><span class="badge badge-win">97.1%</span></td>
+<td>32.1735</td><td>19.3817</td></tr><tr><td><strong>R²</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:95.6043956043956%">96%</div>
+
+<div class="bar-legacy" style="width:4.395604395604396%">4%</div>
+</div></td>
+<td>87</td><td>4</td><td>0</td>
+<td><span class="badge badge-win">95.6%</span></td>
+<td>-38.1435</td><td>-161.9496</td></tr><tr><td><strong>MAPE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:91.20879120879121%">91%</div>
+
+<div class="bar-legacy" style="width:8.791208791208792%">9%</div>
+</div></td>
+<td>83</td><td>8</td><td>0</td>
+<td><span class="badge badge-win">91.2%</span></td>
+<td>1.1679</td><td>0.6295</td></tr><tr><td><strong>% Within 2 Cases</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:52.88461538461539%">53%</div>
+<div class="bar-tie" style="width:43.269230769230774%">43%</div>
+<div class="bar-legacy" style="width:3.8461538461538463%">4%</div>
+</div></td>
+<td>55</td><td>4</td><td>45</td>
+<td><span class="badge badge-win">52.9%</span></td>
+<td>0.8904</td><td>0.9440</td></tr></table></div><div id="tier-HIGH" class="tab-content"><table><tr><th>Metric</th><th style="width:40%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th><th>Legacy Mean</th><th>AI Mean</th></tr><tr><td><strong>MAE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:93.5103244837758%">94%</div>
+
+<div class="bar-legacy" style="width:6.489675516224189%">6%</div>
+</div></td>
+<td>317</td><td>22</td><td>0</td>
+<td><span class="badge badge-win">93.5%</span></td>
+<td>10.0940</td><td>6.2482</td></tr><tr><td><strong>RMSE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:93.5103244837758%">94%</div>
+
+<div class="bar-legacy" style="width:6.489675516224189%">6%</div>
+</div></td>
+<td>317</td><td>22</td><td>0</td>
+<td><span class="badge badge-win">93.5%</span></td>
+<td>13.1008</td><td>8.2359</td></tr><tr><td><strong>R²</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:93.20987654320987%">93%</div>
+
+<div class="bar-legacy" style="width:6.790123456790123%">7%</div>
+</div></td>
+<td>302</td><td>22</td><td>0</td>
+<td><span class="badge badge-win">93.2%</span></td>
+<td>-4.9179</td><td>-4.6944</td></tr><tr><td><strong>MAPE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:89.50617283950618%">90%</div>
+
+<div class="bar-legacy" style="width:10.493827160493826%">10%</div>
+</div></td>
+<td>290</td><td>34</td><td>0</td>
+<td><span class="badge badge-win">89.5%</span></td>
+<td>0.9159</td><td>0.4942</td></tr><tr><td><strong>% Within 2 Cases</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:42.47787610619469%">42%</div>
+<div class="bar-tie" style="width:50.14749262536873%">50%</div>
+<div class="bar-legacy" style="width:7.374631268436578%">7%</div>
+</div></td>
+<td>144</td><td>25</td><td>170</td>
+<td><span class="badge badge-lose">42.5%</span></td>
+<td>0.9052</td><td>0.9358</td></tr></table></div><div id="tier-MEDIUM" class="tab-content"><table><tr><th>Metric</th><th style="width:40%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th><th>Legacy Mean</th><th>AI Mean</th></tr><tr><td><strong>MAE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:93.81771829190568%">94%</div>
+
+<div class="bar-legacy" style="width:6.182281708094328%">6%</div>
+</div></td>
+<td>1,472</td><td>97</td><td>0</td>
+<td><span class="badge badge-win">93.8%</span></td>
+<td>3.3082</td><td>2.0410</td></tr><tr><td><strong>RMSE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:94.77374123645635%">95%</div>
+
+<div class="bar-legacy" style="width:5.226258763543658%">5%</div>
+</div></td>
+<td>1,487</td><td>82</td><td>0</td>
+<td><span class="badge badge-win">94.8%</span></td>
+<td>4.4097</td><td>2.6370</td></tr><tr><td><strong>R²</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:95.60741249142073%">96%</div>
+
+<div class="bar-legacy" style="width:4.392587508579273%">4%</div>
+</div></td>
+<td>1,393</td><td>64</td><td>0</td>
+<td><span class="badge badge-win">95.6%</span></td>
+<td>-1.3078</td><td>-1.6257</td></tr><tr><td><strong>MAPE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:90.80301990391216%">91%</div>
+
+<div class="bar-legacy" style="width:9.196980096087852%">9%</div>
+</div></td>
+<td>1,323</td><td>134</td><td>0</td>
+<td><span class="badge badge-win">90.8%</span></td>
+<td>1.0283</td><td>0.5594</td></tr><tr><td><strong>% Within 2 Cases</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:19.694072657743785%">20%</div>
+<div class="bar-tie" style="width:77.50159337157424%">78%</div>
+
+</div></td>
+<td>309</td><td>44</td><td>1,216</td>
+<td><span class="badge badge-lose">19.7%</span></td>
+<td>0.9224</td><td>0.9506</td></tr></table></div><div id="tier-LOW" class="tab-content"><table><tr><th>Metric</th><th style="width:40%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th><th>Legacy Mean</th><th>AI Mean</th></tr><tr><td><strong>MAE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:79.88571428571429%">80%</div>
+
+<div class="bar-legacy" style="width:20.076190476190476%">20%</div>
+</div></td>
+<td>2,097</td><td>527</td><td>1</td>
+<td><span class="badge badge-win">79.9%</span></td>
+<td>1.1049</td><td>0.8240</td></tr><tr><td><strong>RMSE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:88.19047619047619%">88%</div>
+
+<div class="bar-legacy" style="width:11.80952380952381%">12%</div>
+</div></td>
+<td>2,315</td><td>310</td><td>0</td>
+<td><span class="badge badge-win">88.2%</span></td>
+<td>1.5218</td><td>1.0432</td></tr><tr><td><strong>R²</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:94.1747572815534%">94%</div>
+
+<div class="bar-legacy" style="width:5.825242718446602%">6%</div>
+</div></td>
+<td>2,231</td><td>138</td><td>0</td>
+<td><span class="badge badge-win">94.2%</span></td>
+<td>-1.0946</td><td>-0.1260</td></tr><tr><td><strong>MAPE</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:77.13080168776372%">77%</div>
+
+<div class="bar-legacy" style="width:22.869198312236286%">23%</div>
+</div></td>
+<td>1,828</td><td>542</td><td>0</td>
+<td><span class="badge badge-win">77.1%</span></td>
+<td>0.6754</td><td>0.4735</td></tr><tr><td><strong>% Within 2 Cases</strong></td><td><div class="bar-container">
+<div class="bar-ai" style="width:26.78095238095238%">27%</div>
+<div class="bar-tie" style="width:66.5904761904762%">67%</div>
+<div class="bar-legacy" style="width:6.628571428571428%">7%</div>
+</div></td>
+<td>703</td><td>174</td><td>1,748</td>
+<td><span class="badge badge-lose">26.8%</span></td>
+<td>0.9572</td><td>0.9778</td></tr></table></div></div>
+
+<!-- LEGACY WINS DEEP DIVE -->
+<div class="section" style="border-left: 4px solid #fd7e14;">
+<h2 style="color:#e67700;">Legacy Wins Deep Dive</h2>
+<p style="font-size:13px;color:#666;margin-bottom:16px;">When legacy beats AI, how worried should we be? Analyzing the 649 items where legacy had lower MAE.</p>
+
+<div class="cards" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px;">
+<div class="card" style="border-top:3px solid #28a745">
+  <div class="number" style="font-size:24px">0.13</div>
+  <div class="label">Median Legacy Win<br>Margin (cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #dc3545">
+  <div class="number" style="font-size:24px">0.57</div>
+  <div class="label">Median AI Win<br>Margin (cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #28a745">
+  <div class="number" style="font-size:24px;color:#28a745">71%</div>
+  <div class="label">Legacy Wins with<br>Margin &lt;0.25 Cases</div>
+</div>
+<div class="card" style="border-top:3px solid #28a745">
+  <div class="number" style="font-size:24px;color:#28a745">0.79</div>
+  <div class="label">Median Legacy MAE<br>When Legacy Wins</div>
+</div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:20px;">
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Win Margin Distribution</h3>
+<div class="chart-container" style="height:280px;"><canvas id="marginChart"></canvas></div>
+</div>
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Legacy Loss Rate by Velocity Tier</h3>
+<div class="chart-container" style="height:280px;"><canvas id="lossRateChart"></canvas></div>
+</div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Absolute MAE Context</h3>
+<table>
+<tr><th>Scenario</th><th>Legacy MAE<br>(median)</th><th>AI MAE<br>(median)</th></tr>
+<tr><td>When Legacy wins</td><td>0.79</td><td>0.97</td></tr>
+<tr><td>When AI wins</td><td>1.73</td><td>1.10</td></tr>
+</table>
+<p style="font-size:12px;color:#666;margin-top:8px;">Legacy wins cluster on items where both forecasts are already accurate (sub-1 case MAE). AI wins on items where legacy was struggling (1.7+ case MAE).</p>
+</div>
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Legacy Loss Rate by Demand Segment</h3>
+<table>
+<tr><th>Segment</th><th>Loss Rate</th><th>Losses</th><th>Median Margin</th></tr>
+<tr><td>LOW_INTERMITTENT</td><td><span style="background:#f8d7da;color:#721c24;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">26.2%</span></td><td>322/1229</td><td>0.1081</td></tr><tr><td>LOW_SMOOTH</td><td><span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">15.7%</span></td><td>166/1056</td><td>0.1016</td></tr><tr><td>MEDIUM_ERRATIC</td><td><span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">12.5%</span></td><td>50/400</td><td>0.9622</td></tr><tr><td>LOW_ERRATIC</td><td><span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">12.3%</span></td><td>27/219</td><td>0.2110</td></tr><tr><td>HIGH_ERRATIC</td><td><span style="background:#fff3cd;color:#856404;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">11.9%</span></td><td>10/84</td><td>1.0551</td></tr><tr><td>LOW_SPARSE</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">9.9%</span></td><td>12/121</td><td>0.1116</td></tr><tr><td>MEDIUM_INTERMITTENT</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">7.3%</span></td><td>18/247</td><td>0.3168</td></tr><tr><td>HIGH_SMOOTH</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">5.4%</span></td><td>12/222</td><td>0.5811</td></tr><tr><td>ULTRA_SMOOTH</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">4.1%</span></td><td>3/73</td><td>2.4075</td></tr><tr><td>MEDIUM_SMOOTH</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">3.2%</span></td><td>28/870</td><td>0.1496</td></tr><tr><td>MEDIUM_SPARSE</td><td><span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:4px;font-weight:600;font-size:12px">1.9%</span></td><td>1/52</td><td>1.6546</td></tr></table>
+</div>
+</div>
+</div>
+
+<!-- UNITS vs CASES -->
+<div class="section" style="border-left: 4px solid #7d3c98;">
+<h2 style="color:#7d3c98;">Units vs Cases Conversion</h2>
+<p style="font-size:13px;color:#666;margin-bottom:16px;">All error metrics (MAE, RMSE) are in units. Here's what they look like converted to cases using units_per_case.</p>
+
+<div class="cards" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px;">
+<div class="card" style="border-top:3px solid #7d3c98">
+  <div class="number" style="font-size:22px">0.54</div>
+  <div class="label">Legacy MAE<br>(cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #7d3c98">
+  <div class="number" style="font-size:22px;color:#28a745">0.40</div>
+  <div class="label">AI MAE<br>(cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #28a745">
+  <div class="number" style="font-size:22px;color:#28a745">0.05</div>
+  <div class="label">Median Legacy Win<br>Margin (cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #28a745">
+  <div class="number" style="font-size:22px;color:#28a745">0.07</div>
+  <div class="label">Median AI Win<br>Margin (cases)</div>
+</div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">MAE in Cases by Velocity Tier</h3>
+<div class="chart-container" style="height:280px;"><canvas id="casesTierChart"></canvas></div>
+</div>
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Legacy Win Margin Distribution (Cases)</h3>
+<div class="chart-container" style="height:280px;"><canvas id="casesMarginChart"></canvas></div>
+</div>
+</div>
+<p style="font-size:12px;color:#666;margin-top:12px;">In case terms, both systems average well under 1 case of error. The median legacy win margin is just 0.05 cases — effectively negligible.</p>
+</div>
+
+<!-- FLOOR UNITS -->
+<div class="section" style="border-left: 4px solid #1abc9c;">
+<h2 style="color:#1abc9c;">Floor Units Items (AI-Only Coverage)</h2>
+<p style="font-size:13px;color:#666;margin-bottom:16px;">239 floor unit products across 1,234 store/product combos. Legacy only covered 114 of these.</p>
+
+<div class="cards" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px;">
+<div class="card" style="border-top:3px solid #1abc9c">
+  <div class="number">1,234</div>
+  <div class="label">AI Forecasts</div>
+</div>
+<div class="card" style="border-top:3px solid #dc3545">
+  <div class="number">114</div>
+  <div class="label">Legacy Forecasts</div>
+</div>
+<div class="card" style="border-top:3px solid #1abc9c">
+  <div class="number" style="color:#28a745">0.06</div>
+  <div class="label">Median MAE<br>(cases)</div>
+</div>
+<div class="card" style="border-top:3px solid #1abc9c">
+  <div class="number" style="color:#28a745">100.0%</div>
+  <div class="label">Median<br>% Within 2 Cases</div>
+</div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">AI Forecast Quality for Floor Items</h3>
+<table>
+<tr><th>Metric</th><th>Mean</th><th>Median</th></tr>
+<tr><td>MAE (units)</td><td>0.4860</td><td>0.4229</td></tr><tr><td>RMSE (units)</td><td>0.6276</td><td>0.5327</td></tr><tr><td>R²</td><td>-0.0225</td><td>0.1310</td></tr><tr><td>MAPE</td><td>0.5973</td><td>0.5900</td></tr><tr><td>% Within 2 Cases</td><td>0.9999</td><td>1.0000</td></tr><tr style="font-weight:bold;background:#e8f8f5"><td>MAE (cases)</td><td>0.0648</td><td>0.0573</td></tr>
+</table>
+</div>
+<div>
+<h3 style="font-size:15px; margin-bottom:12px;">Floor Items by Demand Segment</h3>
+<div class="chart-container" style="height:260px;"><canvas id="floorSegChart"></canvas></div>
+</div>
+</div>
+</div>
+<!-- QUALITY GATE SECTION -->
+<div class="section" style="border-left: 4px solid #e74c3c;">
+<h2 style="color:#c0392b;">Quality-Gated Forecasts Analysis</h2>
+<p style="font-size:13px;color:#666;margin-bottom:16px;">These are items the AI system flagged as not meeting quality thresholds. How did they perform in legacy?</p>
+
+<div class="cards" style="grid-template-columns:repeat(4,1fr); margin-bottom:20px;">
+<div class="card"><div class="number">855</div><div class="label">Total Gated</div></div><div class="card"><div class="number">329</div><div class="label">Also in Legacy</div></div><div class="card"><div class="number">526</div><div class="label">Net New (No Legacy)</div></div><div class="card"><div class="number">303</div><div class="label">Head-to-Head Possible</div></div></div>
+<h3 style="font-size:15px; margin-bottom:12px; color:#1a1a2e;">Were Gated Items Already Problematic in Legacy?</h3>
+<table>
+<tr><th>Metric</th><th>Gated Items<br>(Legacy Mean)</th><th>Gated Items<br>(Legacy Median)</th><th>Non-Gated Items<br>(Legacy Mean)</th><th>Comparison</th></tr>
+<tr><td><strong>MAE</strong></td><td>5.8903</td><td>3.2886</td><td>2.8002</td><td><span class="badge badge-lose">2.1x worse</span></td></tr><tr><td><strong>RMSE</strong></td><td>7.8093</td><td>4.5786</td><td>3.7285</td><td><span class="badge badge-lose">2.1x worse</span></td></tr><tr><td><strong>R²</strong></td><td>-18.8381</td><td>-0.5876</td><td>-1.0144</td><td><span class="badge badge-lose">Lower (worse)</span></td></tr><tr><td><strong>MAPE</strong></td><td>1.6605</td><td>0.9699</td><td>0.7609</td><td><span class="badge badge-lose">2.2x worse</span></td></tr><tr><td><strong>% Within 2 Cases</strong></td><td>0.9179</td><td>1.0000</td><td>0.9410</td><td><span class="badge badge-lose">Lower (worse)</span></td></tr></table>
+<h3 style="font-size:15px; margin:20px 0 12px; color:#1a1a2e;">Head-to-Head on Gated Items: AI (Pre-Gate) vs Legacy (n=303)</h3>
+<table>
+<tr><th>Metric</th><th style="width:40%">Win Distribution</th><th>AI Wins</th><th>Legacy Wins</th><th>Ties</th><th>AI Win %</th><th>Legacy Mean</th><th>AI Mean</th></tr>
+<tr><td><strong>MAE</strong></td>
+<td><div class="bar-container">
+<div class="bar-ai" style="width:66.33663366336634%">66%</div>
+
+<div class="bar-legacy" style="width:33.663366336633665%">34%</div>
+</div></td>
+<td>201</td><td>102</td><td>0</td>
+<td><span class="badge badge-win">66.3%</span></td>
+<td>6.1050</td><td>3.6210</td></tr><tr><td><strong>RMSE</strong></td>
+<td><div class="bar-container">
+<div class="bar-ai" style="width:75.57755775577559%">76%</div>
+
+<div class="bar-legacy" style="width:24.422442244224424%">24%</div>
+</div></td>
+<td>229</td><td>74</td><td>0</td>
+<td><span class="badge badge-win">75.6%</span></td>
+<td>8.0998</td><td>4.6743</td></tr><tr><td><strong>R²</strong></td>
+<td><div class="bar-container">
+<div class="bar-ai" style="width:80.45454545454545%">80%</div>
+
+<div class="bar-legacy" style="width:19.545454545454547%">20%</div>
+</div></td>
+<td>177</td><td>43</td><td>0</td>
+<td><span class="badge badge-win">80.5%</span></td>
+<td>-17.2300</td><td>-79.0503</td></tr><tr><td><strong>MAPE</strong></td>
+<td><div class="bar-container">
+<div class="bar-ai" style="width:74.54545454545455%">75%</div>
+
+<div class="bar-legacy" style="width:25.454545454545453%">25%</div>
+</div></td>
+<td>164</td><td>56</td><td>0</td>
+<td><span class="badge badge-win">74.5%</span></td>
+<td>1.6545</td><td>1.0809</td></tr><tr><td><strong>% Within 2 Cases</strong></td>
+<td><div class="bar-container">
+<div class="bar-ai" style="width:13.861386138613863%">14%</div>
+<div class="bar-tie" style="width:71.28712871287128%">71%</div>
+<div class="bar-legacy" style="width:14.85148514851485%">15%</div>
+</div></td>
+<td>42</td><td>45</td><td>216</td>
+<td><span class="badge badge-lose">13.9%</span></td>
+<td>0.9240</td><td>0.9021</td></tr></table>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:20px;">
+<div>
+<h3 style="font-size:15px; margin-bottom:12px; color:#1a1a2e;">Gated Items by Velocity Tier</h3>
+<div class="chart-container" style="height:260px;"><canvas id="qfVelocityChart"></canvas></div>
+</div>
+<div>
+<h3 style="font-size:15px; margin-bottom:12px; color:#1a1a2e;">Gated Items by Demand Segment</h3>
+<div class="chart-container" style="height:260px;"><canvas id="qfSegmentChart"></canvas></div>
+</div>
+</div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('#tab-velocity, #tab-segment').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab-container')[0].querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function switchTierTab(tier) {
+  const tiers = ["ULTRA", "HIGH", "MEDIUM", "LOW"];
+  tiers.forEach(t => document.getElementById('tier-' + t).classList.remove('active'));
+  document.getElementById('tier-' + tier).classList.add('active');
+  const tabs = event.target.parentNode.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Coverage stacked bar
+const covVel = {"LOW": {"legacy": 2625, "ai": 7373, "both": 2625, "ai_only": 4748, "legacy_only": 0, "total_demand": 7373}, "MEDIUM": {"legacy": 1592, "ai": 2189, "both": 1569, "ai_only": 620, "legacy_only": 23, "total_demand": 2348}, "HIGH": {"legacy": 342, "ai": 475, "both": 339, "ai_only": 136, "legacy_only": 3, "total_demand": 483}, "ULTRA": {"legacy": 104, "ai": 106, "both": 104, "ai_only": 2, "legacy_only": 0, "total_demand": 107}};
+const tiers = ["ULTRA", "HIGH", "MEDIUM", "LOW"];
+const covLabels = tiers.filter(t => covVel[t]);
+const covBoth = covLabels.map(t => covVel[t].both);
+const covAiOnly = covLabels.map(t => covVel[t].ai_only);
+const covLegOnly = covLabels.map(t => covVel[t].legacy_only);
+
+new Chart(document.getElementById('covVelocityChart'), {
+  type: 'bar',
+  data: {
+    labels: covLabels,
+    datasets: [
+      { label: 'Both', data: covBoth, backgroundColor: '#6c9bd2' },
+      { label: 'AI Only', data: covAiOnly, backgroundColor: '#28a74580' },
+      { label: 'Legacy Only', data: covLegOnly, backgroundColor: '#dc354560' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
+    scales: { x: { stacked: true }, y: { stacked: true, title: { display: true, text: 'Store/Product Pairs' } } } }
+});
+
+// MAE improvement by tier
+const maeVel = {"ULTRA": {"median": 33.1, "mean": 38.6, "n": 104}, "HIGH": {"median": 30.9, "mean": 34.0, "n": 339}, "MEDIUM": {"median": 34.4, "mean": 34.7, "n": 1569}, "LOW": {"median": 21.9, "mean": 18.6, "n": 2625}};
+const maeTiers = tiers.filter(t => maeVel[t]);
+const maeMedians = maeTiers.map(t => maeVel[t].median);
+const maeMeans = maeTiers.map(t => maeVel[t].mean);
+
+new Chart(document.getElementById('maeVelocityChart'), {
+  type: 'bar',
+  data: {
+    labels: maeTiers,
+    datasets: [
+      { label: 'Median Improvement %', data: maeMedians, backgroundColor: '#28a74590' },
+      { label: 'Mean Improvement %', data: maeMeans, backgroundColor: '#0f346080' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
+    scales: { y: { title: { display: true, text: 'MAE Improvement % (AI vs Legacy)' } } } }
+});
+
+
+// Quality Gate charts
+const qfVelLabels = ["MEDIUM", "LOW", "HIGH", "ULTRA"];
+const qfVelData = [396, 265, 172, 22];
+const qfVelColors = qfVelLabels.map(l => ({
+  'ULTRA': '#8b0000', 'HIGH': '#dc3545', 'MEDIUM': '#fd7e14', 'LOW': '#ffc107'
+})[l] || '#6c757d');
+
+new Chart(document.getElementById('qfVelocityChart'), {
+  type: 'doughnut',
+  data: { labels: qfVelLabels, datasets: [{ data: qfVelData, backgroundColor: qfVelColors }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+});
+
+const qfSegLabels = ["MEDIUM_SMOOTH", "LOW_SMOOTH", "MEDIUM_ERRATIC", "HIGH_INTERMITTENT", "MEDIUM_INTERMITTENT", "LOW_INTERMITTENT", "LOW_ERRATIC", "MEDIUM_SPARSE", "HIGH_ERRATIC", "HIGH_SPARSE", "HIGH_SMOOTH", "ULTRA_INTERMITTENT", "LOW_SPARSE", "ULTRA_ERRATIC", "ULTRA_SMOOTH"];
+const qfSegData = [168, 150, 116, 96, 82, 71, 31, 30, 30, 27, 19, 18, 13, 2, 2];
+const segColors = qfSegLabels.map((_, i) => `hsl(${i * 24}, 65%, 55%)`);
+
+new Chart(document.getElementById('qfSegmentChart'), {
+  type: 'bar',
+  data: { labels: qfSegLabels, datasets: [{ data: qfSegData, backgroundColor: '#c0392b80', borderColor: '#c0392b', borderWidth: 1 }] },
+  options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } },
+    scales: { x: { title: { display: true, text: 'Count' } } } }
+});
+
+
+// Legacy wins margin distribution
+const marginLabels = ["<0.1 cases", "0.1-0.25", "0.25-0.5", "0.5-1.0", "1-2", "2-5", "5+"];
+const marginCounts = [264, 197, 88, 55, 24, 17, 4];
+const marginColors = marginLabels.map((_, i) => i < 2 ? '#28a74590' : (i < 4 ? '#ffc10780' : '#dc354580'));
+
+new Chart(document.getElementById('marginChart'), {
+  type: 'bar',
+  data: {
+    labels: marginLabels,
+    datasets: [{ label: 'Legacy Win Count', data: marginCounts, backgroundColor: marginColors, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { title: { display: true, text: 'MAE Margin (AI worse by)' } },
+      y: { title: { display: true, text: 'Count' } }
+    }
+  }
+});
+
+// Loss rate by tier
+const tierLabels = ['ULTRA', 'HIGH', 'MEDIUM', 'LOW'];
+const lossRates = tierLabels.map(t => ({"ULTRA": 2.9, "HIGH": 6.5, "MEDIUM": 6.2, "LOW": 20.1})[t] || 0);
+const tierColors = lossRates.map(r => r < 10 ? '#28a74590' : (r < 15 ? '#ffc10780' : '#dc354580'));
+
+new Chart(document.getElementById('lossRateChart'), {
+  type: 'bar',
+  data: {
+    labels: tierLabels,
+    datasets: [{ label: 'Legacy Win Rate %', data: lossRates, backgroundColor: tierColors, borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: 'Legacy Win Rate %' }, max: 25 }
+    }
+  }
+});
+
+
+// Cases by tier
+new Chart(document.getElementById('casesTierChart'), {
+  type: 'bar',
+  data: {
+    labels: ["ULTRA", "HIGH", "MEDIUM", "LOW"],
+    datasets: [
+      { label: 'Legacy MAE (cases)', data: [0.8093, 0.8982, 0.6183, 0.4391], backgroundColor: '#dc354580' },
+      { label: 'AI MAE (cases)', data: [0.5367, 0.6161, 0.424, 0.3559], backgroundColor: '#28a74580' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
+    scales: { y: { title: { display: true, text: 'MAE (cases)' }, beginAtZero: true } } }
+});
+
+// Case margin distribution
+new Chart(document.getElementById('casesMarginChart'), {
+  type: 'bar',
+  data: {
+    labels: ["<0.05", "0.05-0.1", "0.1-0.25", "0.25-0.5", "0.5-1.0", "1.0+"],
+    datasets: [{ data: [321, 97, 140, 40, 25, 26], backgroundColor: ["<0.05", "0.05-0.1", "0.1-0.25", "0.25-0.5", "0.5-1.0", "1.0+"].map((_, i) => i < 2 ? '#28a74590' : (i < 4 ? '#ffc10780' : '#dc354580')), borderWidth: 0 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+    scales: { x: { title: { display: true, text: 'Legacy Win Margin (cases)' } }, y: { title: { display: true, text: 'Count' } } } }
+});
+
+// Floor segment chart
+new Chart(document.getElementById('floorSegChart'), {
+  type: 'bar',
+  data: {
+    labels: ["LOW_INTERMITTENT", "LOW_SPARSE", "LOW_SMOOTH", "MEDIUM_INTERMITTENT", "MEDIUM_SMOOTH", "LOW_ERRATIC", "MEDIUM_SPARSE", "MEDIUM_ERRATIC"],
+    datasets: [{ data: [731, 394, 61, 22, 10, 7, 6, 3], backgroundColor: '#1abc9c80', borderColor: '#1abc9c', borderWidth: 1 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } },
+    scales: { x: { title: { display: true, text: 'Count' } } } }
+});
+</script>
+</body></html>
