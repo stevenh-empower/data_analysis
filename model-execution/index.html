@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Model Execution — ML Service Staging · 2026-05-04 16:16Z–20:16Z</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --bg2: #111a30;
+    --panel: #15203a;
+    --panel-2: #1b2848;
+    --border: #1f2a44;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --c36: #60a5fa;
+    --c234: #a78bfa;
+    --stats: #f59e0b;
+    --train: #34d399;
+    --forecast: #f472b6;
+    --green: #22c55e;
+    --red: #f87171;
+    --amber: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #070b1a 0, #0b1020 100%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  .container { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+  header { margin-bottom: 28px; }
+  h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.02em; }
+  .sub { color: var(--muted); font-size: 13.5px; }
+  .sub code { background: #1b2848; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+  .legend { display: flex; gap: 18px; margin-top: 14px; font-size: 13px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 22px 0 28px; }
+  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .kpi-label { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .kpi-value { font-size: 26px; font-weight: 700; margin: 6px 0 4px; letter-spacing: -0.02em; }
+  .kpi-foot { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+  .kpi.cust36 { border-left: 3px solid var(--c36); }
+  .kpi.cust234 { border-left: 3px solid var(--c234); }
+
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 22px; }
+  section h2 { margin: 0 0 4px; font-size: 18px; letter-spacing: -0.01em; }
+  section .desc { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { padding: 7px 9px; text-align: right; border-bottom: 1px solid #233055; }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.05em; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  td.mute { color: var(--muted); }
+  .pill { display: inline-block; font-size: 10.5px; padding: 2px 7px; border-radius: 999px; font-weight: 600; letter-spacing: 0.04em; }
+  .pill.cust36 { background: rgba(96,165,250,0.18); color: #93c5fd; }
+  .pill.cust234 { background: rgba(167,139,250,0.18); color: #c4b5fd; }
+  .pill.ok { background: rgba(34,197,94,0.15); color: #86efac; }
+  .pill.warn { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 880px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Bar chart */
+  .bars { margin-top: 6px; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 90px; gap: 10px; align-items: center; padding: 5px 0; font-size: 12.5px; }
+  .bar-label { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { background: var(--panel-2); border-radius: 4px; height: 18px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .bar-fill.cust36 { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .bar-fill.cust234 { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .bar-fill.stats { background: linear-gradient(90deg, #d97706, #f59e0b); }
+  .bar-fill.train { background: linear-gradient(90deg, #059669, #34d399); }
+  .bar-fill.forecast { background: linear-gradient(90deg, #db2777, #f472b6); }
+  .bar-value { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Timeline */
+  .timeline-wrap { background: var(--panel-2); border-radius: 8px; padding: 20px 18px 18px; margin-top: 8px; position: relative; }
+  .tl-axis { position: relative; height: 22px; border-bottom: 1px solid #2c3a5c; margin-bottom: 12px; font-size: 11px; color: var(--muted); }
+  .tl-tick { position: absolute; bottom: -6px; transform: translateX(-50%); white-space: nowrap; }
+  .tl-tick::before { content: ""; position: absolute; bottom: -3px; left: 50%; width: 1px; height: 6px; background: #2c3a5c; }
+  .tl-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: center; padding: 5px 0; font-size: 12px; }
+  .tl-row .tl-label { color: var(--muted); }
+  .tl-track { position: relative; height: 22px; background: #0e1730; border-radius: 4px; }
+  .tl-block { position: absolute; height: 100%; border-radius: 4px; padding: 0 8px; display: flex; align-items: center; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; color: #0b1020; }
+  .tl-block.stats { background: var(--stats); }
+  .tl-block.train { background: var(--train); }
+  .tl-block.forecast { background: var(--forecast); color: #fff; }
+
+  .compare-table th.sep, .compare-table td.sep { border-left: 2px solid #2c3a5c; }
+
+  .footer { color: var(--muted); font-size: 12px; margin-top: 32px; text-align: center; }
+  .footer code { background: #1b2848; padding: 1px 5px; border-radius: 3px; }
+
+  .callout { background: var(--panel-2); border: 1px solid var(--border); border-left: 4px solid var(--amber); border-radius: 8px; padding: 12px 16px; margin-top: 14px; font-size: 13px; }
+  .callout-title { font-weight: 600; margin-bottom: 4px; }
+  .ex { background: #0a1326; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: #cbd5e1; margin-top: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>Model Execution — ML Service Staging</h1>
+  <div class="sub">
+    Window 2026-05-04 <strong>16:16Z → 20:16Z</strong> (4h). Account 061051251509.<br>
+    Log groups: <code>StatsWorkerTaskDef…D809E094</code>, <code>MLWorkerTaskDef…C30E85EC</code>.
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#60a5fa"></span>Customer 36</span>
+    <span><span class="swatch" style="background:#a78bfa"></span>Customer 234</span>
+    <span><span class="swatch" style="background:#f59e0b"></span>Stats worker</span>
+    <span><span class="swatch" style="background:#34d399"></span>Dense ML training</span>
+    <span><span class="swatch" style="background:#f472b6"></span>Dense forecasting</span>
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi cust36">
+    <div class="kpi-label">Cust 36 — Stats wall-clock</div>
+    <div class="kpi-value">60m 11s</div>
+    <div class="kpi-foot">21,690 store×product targets across 4 segments</div>
+  </div>
+  <div class="kpi cust234">
+    <div class="kpi-label">Cust 234 — Stats wall-clock</div>
+    <div class="kpi-value">36m 02s</div>
+    <div class="kpi-foot">10,298 store×product targets across 4 segments</div>
+  </div>
+  <div class="kpi cust36">
+    <div class="kpi-label">Cust 36 — Dense training</div>
+    <div class="kpi-value">32m 03s</div>
+    <div class="kpi-foot">3,501 jobs · mean 1.32s · p99 5.64s</div>
+  </div>
+  <div class="kpi cust234">
+    <div class="kpi-label">Cust 234 — Dense training</div>
+    <div class="kpi-value">30m 35s</div>
+    <div class="kpi-foot">673 jobs · mean 0.88s · p99 1.92s</div>
+  </div>
+  <div class="kpi cust36">
+    <div class="kpi-label">Cust 36 — Dense forecasting</div>
+    <div class="kpi-value">69m 24s</div>
+    <div class="kpi-foot">1,371 jobs across 16 streams · ~19.7/min</div>
+  </div>
+  <div class="kpi cust234">
+    <div class="kpi-label">Cust 234 — Dense forecasting</div>
+    <div class="kpi-value">51m 32s</div>
+    <div class="kpi-foot">642 jobs across 4 streams · ~12.5/min</div>
+  </div>
+</div>
+
+<!-- STATS WORKER -->
+<section>
+  <h2>Stats worker — segment runtimes</h2>
+  <p class="desc">Each customer runs four demand-segment jobs sequentially: <strong>ULTRA → MEDIUM → HIGH → LOW</strong> (order observed). LOW dominates wall-clock for both customers (~65–76% of total).</p>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;color:var(--c234);margin:0 0 8px">Customer 234 — segment elapsed</h3>
+      <div class="bars">
+        <div class="bar-row"><div class="bar-label">ULTRA · 104 tgt</div><div class="bar-track"><div class="bar-fill cust234" style="width:0.4%"></div></div><div class="bar-value">10.4s</div></div>
+        <div class="bar-row"><div class="bar-label">MEDIUM · 2,351 tgt</div><div class="bar-track"><div class="bar-fill cust234" style="width:19.7%"></div></div><div class="bar-value">7m 43s</div></div>
+        <div class="bar-row"><div class="bar-label">HIGH · 470 tgt</div><div class="bar-track"><div class="bar-fill cust234" style="width:2.1%"></div></div><div class="bar-value">49.7s</div></div>
+        <div class="bar-row"><div class="bar-label">LOW · 7,373 tgt</div><div class="bar-track"><div class="bar-fill cust234" style="width:69.7%"></div></div><div class="bar-value">27m 18s</div></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;color:var(--c36);margin:0 0 8px">Customer 36 — segment elapsed</h3>
+      <div class="bars">
+        <div class="bar-row"><div class="bar-label">ULTRA · 148 tgt</div><div class="bar-track"><div class="bar-fill cust36" style="width:2.2%"></div></div><div class="bar-value">51.9s</div></div>
+        <div class="bar-row"><div class="bar-label">MEDIUM · 4,374 tgt</div><div class="bar-track"><div class="bar-fill cust36" style="width:43.5%"></div></div><div class="bar-value">17m 02s</div></div>
+        <div class="bar-row"><div class="bar-label">HIGH · 786 tgt</div><div class="bar-track"><div class="bar-fill cust36" style="width:7.9%"></div></div><div class="bar-value">3m 06s</div></div>
+        <div class="bar-row"><div class="bar-label">LOW · 16,382 tgt</div><div class="bar-track"><div class="bar-fill cust36" style="width:100%"></div></div><div class="bar-value">39m 10s</div></div>
+      </div>
+    </div>
+  </div>
+
+  <table style="margin-top:18px">
+    <thead><tr>
+      <th>Job</th><th>Customer</th><th>Segment</th><th>Targets</th><th>Start</th><th>End</th><th>Elapsed</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>stats_ultra_234</td><td><span class="pill cust234">234</span></td><td class="mute">ULTRA</td><td>104</td><td class="mute">17:06:24</td><td class="mute">17:06:34</td><td>10.4s</td></tr>
+      <tr><td>stats_medium_234</td><td><span class="pill cust234">234</span></td><td class="mute">MEDIUM</td><td>2,351</td><td class="mute">16:58:40</td><td class="mute">17:06:24</td><td>7m 43s</td></tr>
+      <tr><td>stats_high_234</td><td><span class="pill cust234">234</span></td><td class="mute">HIGH</td><td>470</td><td class="mute">17:06:34</td><td class="mute">17:07:24</td><td>49.7s</td></tr>
+      <tr><td>stats_low_234</td><td><span class="pill cust234">234</span></td><td class="mute">LOW</td><td>7,373</td><td class="mute">17:07:24</td><td class="mute">17:34:42</td><td>27m 18s</td></tr>
+      <tr><td>stats_ultra_36</td><td><span class="pill cust36">36</span></td><td class="mute">ULTRA</td><td>148</td><td class="mute">18:49:50</td><td class="mute">18:50:42</td><td>51.9s</td></tr>
+      <tr><td>stats_medium_36</td><td><span class="pill cust36">36</span></td><td class="mute">MEDIUM</td><td>4,374</td><td class="mute">18:50:42</td><td class="mute">19:07:44</td><td>17m 02s</td></tr>
+      <tr><td>stats_high_36</td><td><span class="pill cust36">36</span></td><td class="mute">HIGH</td><td>786</td><td class="mute">19:46:56</td><td class="mute">19:50:02</td><td>3m 06s</td></tr>
+      <tr><td>stats_low_36</td><td><span class="pill cust36">36</span></td><td class="mute">LOW</td><td>16,382</td><td class="mute">19:07:45</td><td class="mute">19:46:55</td><td>39m 10s</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="border-left-color:var(--green)">
+    <div class="callout-title">All 8 stats jobs ran clean</div>
+    No errors, no timeouts, no retries. Throughput steady at ~5–7 forecasts/sec across batches. Cust 36 has 2.1× the targets of cust 234 and runs 1.67× longer — slightly better than linear scaling.
+  </div>
+</section>
+
+<!-- DENSE ML WORKER -->
+<section>
+  <h2>Dense ML worker — training &amp; forecasting</h2>
+  <p class="desc">
+    Single active ML-worker log group runs a mix of model types
+    (<strong>38% dense</strong> · 56% rf_rec · 5% rf_multi/trend_baseline).
+    The figures below cover training jobs running on streams that handled dense.
+    Per-job <code>model_type</code> tagging is best-effort: 1,410 explicit
+    <em>"Using dense neural network handler"</em> invocations were observed.
+  </p>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size:14px;margin:0 0 8px;color:var(--train)">Training — duration percentiles</h3>
+      <table>
+        <thead><tr><th>Cohort</th><th>Jobs</th><th>Mean</th><th>p50</th><th>p90</th><th>p99</th><th>Max</th></tr></thead>
+        <tbody>
+          <tr><td>Overall</td><td>4,174</td><td>1.25s</td><td>1.04s</td><td>1.61s</td><td>5.29s</td><td>26.78s</td></tr>
+          <tr><td><span class="pill cust36">cust 36</span></td><td>3,501</td><td>1.32s</td><td>1.09s</td><td>1.76s</td><td>5.64s</td><td>26.78s</td></tr>
+          <tr><td><span class="pill cust234">cust 234</span></td><td>673</td><td>0.88s</td><td>0.81s</td><td>1.05s</td><td>1.92s</td><td>3.75s</td></tr>
+        </tbody>
+      </table>
+      <p class="desc" style="margin-top:14px">Cust 36 mean is ~1.5× cust 234 — likely heavier feature payloads on cust 36 jobs (more derived features per the config dumps).</p>
+    </div>
+    <div>
+      <h3 style="font-size:14px;margin:0 0 8px;color:var(--forecast)">Forecasting — wall-clock &amp; throughput</h3>
+      <table>
+        <thead><tr><th>Customer</th><th>Jobs</th><th>Streams</th><th>Window</th><th>Span</th><th>Throughput</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill cust234">234</span></td><td>642</td><td>4</td><td class="mute">17:25 → 18:16</td><td>51m 32s</td><td>~12.5/min</td></tr>
+          <tr><td><span class="pill cust36">36</span></td><td>1,371</td><td>16</td><td class="mute">19:20 → 20:29</td><td>69m 24s</td><td>~19.7/min</td></tr>
+        </tbody>
+      </table>
+      <p class="desc" style="margin-top:14px">Forecasting jobs don't emit a "completed" line, so per-job durations aren't measurable. Cust 36 used 4× the parallel workers but only ~1.6× the throughput — diminishing returns from sharding.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px;margin:22px 0 8px">Workload mix on the dense ML worker (config-line counts)</h3>
+  <div class="bars">
+    <div class="bar-row"><div class="bar-label">rf_rec</div><div class="bar-track"><div class="bar-fill" style="width:56%;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div><div class="bar-value">5,020 (56%)</div></div>
+    <div class="bar-row"><div class="bar-label">dense</div><div class="bar-track"><div class="bar-fill train" style="width:38%"></div></div><div class="bar-value">3,423 (38%)</div></div>
+    <div class="bar-row"><div class="bar-label">rf_multi</div><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:#64748b"></div></div><div class="bar-value">131 (1%)</div></div>
+    <div class="bar-row"><div class="bar-label">trend_baseline</div><div class="bar-track"><div class="bar-fill" style="width:0.5%;background:#475569"></div></div><div class="bar-value">41 (&lt;1%)</div></div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">⚠ S3 HeadObject 404s near end of window</div>
+    50 error lines (~10 unique tracebacks), all clustered around <strong>20:29Z</strong>. Failure mode: model artifact lookup returns 404 on a small number of jobs. Affected only ~50 jobs out of thousands — not a worker-wide outage.
+    <div class="ex">botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
+ERROR - Job processing failed: …HeadObject…Not Found
+ERROR - Error in queue polling: …HeadObject…Not Found</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <h2>Execution timeline — both customers, both workers</h2>
+  <p class="desc">All times UTC. Stats and dense training overlap; dense forecasting tails afterward.</p>
+
+  <div class="timeline-wrap">
+    <div class="tl-axis">
+      <span class="tl-tick" style="left:0%">16:16</span>
+      <span class="tl-tick" style="left:12.5%">16:46</span>
+      <span class="tl-tick" style="left:25%">17:16</span>
+      <span class="tl-tick" style="left:37.5%">17:46</span>
+      <span class="tl-tick" style="left:50%">18:16</span>
+      <span class="tl-tick" style="left:62.5%">18:46</span>
+      <span class="tl-tick" style="left:75%">19:16</span>
+      <span class="tl-tick" style="left:87.5%">19:46</span>
+      <span class="tl-tick" style="left:100%">20:16</span>
+    </div>
+
+    <!-- 4h window = 240 min. Time pct = (mins from 16:16) / 240 * 100 -->
+    <div class="tl-row">
+      <div class="tl-label">cust 234 · stats</div>
+      <div class="tl-track">
+        <!-- 16:58:40 → 17:34:42  (start: 17.5%, width: 15.0%) -->
+        <div class="tl-block stats" style="left:17.7%;width:15.0%">36m</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-label">cust 234 · train</div>
+      <div class="tl-track">
+        <!-- 17:02:23 → 17:32:58 (start: 19.2%, width: 12.7%) -->
+        <div class="tl-block train" style="left:19.2%;width:12.7%">30m</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-label">cust 234 · forecast</div>
+      <div class="tl-track">
+        <!-- 17:25:22 → 18:16:54 (start: 28.8%, width: 21.5%) -->
+        <div class="tl-block forecast" style="left:28.8%;width:21.5%">51m</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-label">cust 36 · stats</div>
+      <div class="tl-track">
+        <!-- 18:49:50 → 19:50:02 (start: 64.0%, width: 25.1%) -->
+        <div class="tl-block stats" style="left:64.0%;width:25.1%">60m</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-label">cust 36 · train</div>
+      <div class="tl-track">
+        <!-- 18:50:58 → 19:23:01 (start: 64.5%, width: 13.4%) -->
+        <div class="tl-block train" style="left:64.5%;width:13.4%">32m</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-label">cust 36 · forecast</div>
+      <div class="tl-track">
+        <!-- 19:20:23 → 20:29:48 (start: 76.7%, width: 28.9%, clipped to 100%) -->
+        <div class="tl-block forecast" style="left:76.7%;width:23.3%">69m →</div>
+      </div>
+    </div>
+  </div>
+  <p class="desc" style="margin-top:14px">
+    Pattern per customer: stats and dense-training kick off near-simultaneously (within seconds of each other),
+    dense-training finishes first, then dense-forecasting starts and runs longest. Cust 36 forecasting extends
+    past the 4h window end (last forecast at 20:29:48Z, ~13 min outside the chart).
+  </p>
+</section>
+
+<!-- COMPARE TABLE -->
+<section>
+  <h2>Side-by-side — cust 36 vs cust 234</h2>
+  <p class="desc">Same 4h window, both worker pools.</p>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="sep">Cust 234</th>
+        <th>Cust 36</th>
+        <th>Ratio (36 / 234)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Stats targets (store×product)</td><td class="sep">10,298</td><td>21,690</td><td>2.11×</td></tr>
+      <tr><td>Stats wall-clock</td><td class="sep">36m 02s</td><td>60m 11s</td><td>1.67×</td></tr>
+      <tr><td>Dense training jobs</td><td class="sep">673</td><td>3,501</td><td>5.20×</td></tr>
+      <tr><td>Dense training wall-clock</td><td class="sep">30m 35s</td><td>32m 03s</td><td>1.05×</td></tr>
+      <tr><td>Dense training mean / job</td><td class="sep">0.88s</td><td>1.32s</td><td>1.50×</td></tr>
+      <tr><td>Dense forecasting jobs</td><td class="sep">642</td><td>1,371</td><td>2.14×</td></tr>
+      <tr><td>Dense forecasting wall-clock</td><td class="sep">51m 32s</td><td>69m 24s</td><td>1.35×</td></tr>
+      <tr><td>Dense forecasting parallel streams</td><td class="sep">4</td><td>16</td><td>4.00×</td></tr>
+      <tr><td>Dense forecasting throughput (/min)</td><td class="sep">12.5</td><td>19.7</td><td>1.58×</td></tr>
+      <tr><td>Errors observed</td><td class="sep"><span class="pill ok">0</span></td><td><span class="pill warn">~50 S3 404</span></td><td>—</td></tr>
+    </tbody>
+  </table>
+  <div class="callout" style="border-left-color:var(--c36)">
+    <div class="callout-title">Headline observation</div>
+    Cust 36 has 5.2× as many dense-training jobs as cust 234 but parallelises across more workers, completing in nearly the same wall-clock (32m vs 30.5m). Forecasting throughput, by contrast, scales sub-linearly with worker count (16 streams → only 1.58× faster than 4 streams).
+  </div>
+</section>
+
+<div class="footer">
+  Data pulled via CloudWatch Logs Insights (<code>aws --profile claude</code>, read-only). Generated 2026-05-04.
+</div>
+</div>
+</body>
+</html>
