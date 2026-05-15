@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AWS Transfer Family · Costs &amp; Removal Plan · 2026-05-15</title>
+<style>
+  :root {
+    --bg: #0a0f1f; --bg2: #0b1020;
+    --panel: #111a30; --panel-2: #15203a;
+    --border: #1c2641; --border-2: #2c3a5c;
+    --text: #e2e8f0; --muted: #94a3b8; --dim: #475569;
+    --accent: #60a5fa; --accent-2: #a78bfa;
+    --ok: #34d399; --warn: #fbbf24; --bad: #f87171;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 0% 0%, rgba(96,165,250,0.06), transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(248,113,113,0.05), transparent 40%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  aside {
+    background: rgba(10, 14, 28, 0.7);
+    backdrop-filter: blur(8px);
+    border-right: 1px solid var(--border);
+    padding: 24px 14px 24px 18px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  .brand { padding: 4px 6px 22px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .brand-title { font-size: 13.5px; font-weight: 700; letter-spacing: 0.01em; }
+  .brand-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .nav-section {
+    font-size: 10.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 18px 8px 6px; font-weight: 600;
+  }
+  .nav-item {
+    display: grid; grid-template-columns: 14px 1fr; gap: 9px; align-items: baseline;
+    padding: 8px 10px; border-radius: 7px; color: var(--text); text-decoration: none;
+    transition: background 0.12s, color 0.12s; position: relative;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.03); }
+  .nav-item.active { background: rgba(96,165,250,0.1); color: #fff; }
+  .nav-item.active::before {
+    content: ""; position: absolute; left: -18px; top: 8px; bottom: 8px; width: 2px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .nav-item .dot { width: 7px; height: 7px; border-radius: 50%; align-self: center; }
+  .nav-item .nav-name { font-size: 13px; font-weight: 500; grid-column: 2; }
+  .nav-item .nav-role { font-size: 11px; color: var(--muted); grid-column: 2; margin-top: 1px; }
+  .dot.ok { background: var(--ok); box-shadow: 0 0 0 2px rgba(52,211,153,0.18); }
+  .dot.warn { background: var(--warn); box-shadow: 0 0 0 2px rgba(251,191,36,0.18); }
+  .dot.bad { background: var(--bad); box-shadow: 0 0 0 2px rgba(248,113,113,0.18); }
+  .back-link {
+    display: block; font-size: 11.5px; color: var(--muted); text-decoration: none;
+    margin: 22px 8px 0; padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* Main */
+  main { padding: 48px 56px 100px; max-width: 1160px; }
+  section { display: none; }
+  section.active { display: block; }
+
+  .hero { margin-bottom: 36px; }
+  .hero-eyebrow { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; font-weight: 600; }
+  .hero-h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.025em; font-weight: 700; margin: 0 0 16px; max-width: 920px; }
+  .hero-h1 .accent { background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-lede { color: var(--muted); font-size: 15px; max-width: 800px; margin: 0; }
+  .hero-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px,1fr)); gap: 14px; margin-top: 28px; }
+  .hero-stat {
+    background: linear-gradient(180deg, var(--panel), var(--bg2));
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; position: relative; overflow: hidden;
+  }
+  .hero-stat::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border-2); }
+  .hero-stat.ok::before { background: var(--ok); }
+  .hero-stat.warn::before { background: var(--warn); }
+  .hero-stat.bad::before { background: var(--bad); }
+  .hero-stat.accent::before { background: linear-gradient(180deg, var(--accent), var(--accent-2)); }
+  .hero-stat-num { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .hero-stat-unit { font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+  .hero-stat-label { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  /* Sections */
+  .section-block { margin: 32px 0; }
+  h2 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin: 0 0 14px; }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; max-width: 800px; }
+  code { background: rgba(96,165,250,0.1); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; color: #cbd5e1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  p { font-size: 14.5px; max-width: 820px; }
+  ul.bullets { padding-left: 18px; font-size: 14px; max-width: 820px; }
+  ul.bullets li { margin: 6px 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 1000px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Tables */
+  .table-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .srv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .srv-table th {
+    text-align: left; padding: 12px 16px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--muted); font-weight: 600;
+    background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+  }
+  .srv-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .srv-table tr:last-child td { border-bottom: none; }
+  .srv-table .right { text-align: right; }
+  .srv-table .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .srv-table .mute { color: var(--muted); }
+  .row-hot td { background: rgba(248,113,113,0.06); }
+  .row-hot .num { color: var(--bad); }
+
+  /* Chart */
+  svg.chart { width: 100%; height: auto; display: block; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 12px; }
+  svg.chart .grid { stroke: rgba(255,255,255,0.05); stroke-width: 1; }
+  svg.chart .axis { fill: var(--muted); font-size: 10.5px; font-family: inherit; }
+  svg.chart .bar-label { fill: var(--text); font-size: 11.5px; font-family: ui-monospace, Menlo, monospace; text-anchor: end; }
+  svg.chart .bar-value { fill: var(--muted); font-size: 11px; font-family: inherit; }
+  svg.chart .overlay { fill: var(--dim); font-size: 13px; font-style: italic; font-family: inherit; }
+
+  /* Verdict pill */
+  .verdict-pill { font-size: 11px; padding: 4px 12px; border-radius: 999px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+  .verdict-pill.ok { background: rgba(52,211,153,0.1); color: #6ee7b7; border-color: rgba(52,211,153,0.3); }
+  .verdict-pill.warn { background: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(251,191,36,0.35); }
+  .verdict-pill.bad { background: rgba(248,113,113,0.12); color: #fca5a5; border-color: rgba(248,113,113,0.35); }
+  .pill-lg { font-size: 12px; padding: 5px 14px; }
+  .pill { font-size: 10.5px; padding: 2px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pill.ok { background: rgba(52,211,153,0.12); color: #6ee7b7; }
+  .pill.warn { background: rgba(251,191,36,0.12); color: #fbbf24; }
+  .pill.bad { background: rgba(248,113,113,0.12); color: #fca5a5; }
+
+  /* Server cards */
+  .srv-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 1000px) { .srv-cards { grid-template-columns: 1fr; } }
+  .srv-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px;
+    border-top: 3px solid var(--border-2);
+  }
+  .srv-card-ok { border-top-color: var(--ok); }
+  .srv-card-bad { border-top-color: var(--bad); }
+  .srv-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .srv-card-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .srv-card-id { font-size: 11px; color: var(--muted); margin-top: 4px; display: inline-block; }
+  .srv-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; margin: 10px 0; }
+  .srv-field-label { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .srv-field-val { font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .srv-card-foot { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .srv-card-users { font-size: 12px; color: var(--text); margin-top: 4px; font-family: ui-monospace, Menlo, monospace; line-height: 1.6; }
+  .srv-card-purpose { font-size: 13.5px; color: var(--muted); margin: 14px 0 0; max-width: none; }
+
+  /* Code blocks */
+  pre.cmd {
+    background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 18px; font-size: 12.5px; line-height: 1.7; color: #cbd5e1;
+    overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre; margin: 12px 0;
+  }
+  pre.cmd::before { content: "$"; color: var(--accent); margin-right: 12px; }
+  pre.log-sample {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; font-size: 11.5px; line-height: 1.6; color: #cbd5e1;
+    white-space: pre-wrap; word-break: break-word; margin-top: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-x: auto; max-height: 240px;
+  }
+  details summary { font-size: 12px; color: var(--accent); cursor: pointer; margin-top: 14px; user-select: none; }
+  details summary:hover { text-decoration: underline; }
+  details[open] summary { color: var(--muted); }
+
+  .risk-note {
+    background: rgba(251,191,36,0.05); border-left: 3px solid var(--warn);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13.5px; color: var(--muted); margin: 16px 0;
+  }
+  .risk-note strong { color: #fbbf24; }
+
+  footer { color: var(--muted); font-size: 11.5px; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <nav id="nav"><div class="brand"><div class="brand-title">Transfer Family</div><div class="brand-sub">Cost analysis &amp; removal plan · 2026-05-15</div></div><div class="nav-section">Findings</div><a href="#" class="nav-item active" data-target="summary"><span class="nav-name">Executive summary</span></a><a href="#" class="nav-item" data-target="anatomy"><span class="nav-name">Bill anatomy</span><span class="nav-role">where the money goes</span></a><a href="#" class="nav-item" data-target="servers"><span class="nav-name">The two servers</span><span class="nav-role">prod vs delivery</span></a><a href="#" class="nav-item" data-target="evidence"><span class="nav-name">Evidence of disuse</span><span class="nav-role">delivery server, 30d</span></a><div class="nav-section">Removal Plan</div><a href="#" class="nav-item" data-target="step-preflight"><span class="dot ok"></span><span class="nav-name">1. Pre-flight checks</span></a><a href="#" class="nav-item" data-target="step-disable"><span class="dot ok"></span><span class="nav-name">2. Disable &amp; monitor</span></a><a href="#" class="nav-item" data-target="step-delete"><span class="dot ok"></span><span class="nav-name">3. Delete the stack</span></a><a href="#" class="nav-item" data-target="step-cleanup"><span class="dot ok"></span><span class="nav-name">4. Cleanup orphans</span></a><a href="#" class="nav-item" data-target="step-verify"><span class="dot ok"></span><span class="nav-name">5. Verify savings</span></a><a href="#" class="nav-item" data-target="rollback"><span class="dot warn"></span><span class="nav-name">Rollback plan</span></a></nav>
+    <a class="back-link" href="../">← All reports</a>
+  </aside>
+  <main id="main">
+    
+<section id="section-summary" class="active">
+  <div class="hero">
+    <div class="hero-eyebrow">AWS Transfer Family · 30-day analysis · 2026-05-15</div>
+    <h1 class="hero-h1">One unused SFTP server is costing <span class="accent">$216/month</span>. Deleting it cleanly is a five-step job.</h1>
+    <p class="hero-lede">99.7% of the Transfer Family bill is per-endpoint <code>ProtocolHours</code>, not data. The account runs two SFTP servers: <strong>EmpowerFreshProFTP</strong> is doing real work every minute of every day, and <strong>EmpowerFreshDeliveryFTP</strong> hasn't seen a legitimate session since November 2024 — only internet brute-force scanners hit it now.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">$427<span class="hero-stat-unit">/mo</span></div>
+        <div class="hero-stat-label">current Transfer Family bill</div>
+      </div>
+      <div class="hero-stat bad">
+        <div class="hero-stat-num">99.7%</div>
+        <div class="hero-stat-label">of it is per-endpoint hours, not data</div>
+      </div>
+      <div class="hero-stat warn">
+        <div class="hero-stat-num">2</div>
+        <div class="hero-stat-label">SFTP servers · 1 active, 1 idle</div>
+      </div>
+      <div class="hero-stat accent">
+        <div class="hero-stat-num">$216<span class="hero-stat-unit">/mo</span></div>
+        <div class="hero-stat-label">savings from removing the idle one</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h2>The recommendation in one line</h2>
+    <p>Delete CloudFormation stack <code>EmpowerFreshDeliveryFTP</code>. It owns the unused SFTP server and every supporting resource that's specific to it — Route53 record, API Gateway identity provider, identity Lambda, IAM roles, and log groups. Three things survive the stack delete and need a separate decision: the underlying S3 bucket <code>empowerfresh.ftp-test</code> (still receiving non-SFTP writes), any Secrets Manager entries with prefix <code>SFTPDelivery/*</code>, and an orphaned ACM certificate that was attached outside the stack.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>Why this is safe</h2>
+    <ul class="bullets">
+      <li>Zero legitimate SFTP sessions in 30 days. Last real session: <strong>2024-11-07</strong>, two days after the server was created.</li>
+      <li>No code in any local repo connects to the delivery SFTP hostname, server ID, or API Gateway. The only references are to the underlying S3 bucket — which survives stack deletion.</li>
+      <li>The active prod server (<code>EmpowerFreshProFTP</code>) is a separate stack with a separate identity provider, separate IAM roles, and a separate S3 bucket. The two are not coupled.</li>
+      <li>Removal is fully reversible: the CloudFormation template lives in <code>EmpowerFresh-CloudFormation/ECS/EmpowerFreshDeliveryFTP/</code> and can be re-deployed end-to-end in minutes.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="section-anatomy">
+  <div class="hero">
+    <div class="hero-eyebrow">Bill anatomy</div>
+    <h1 class="hero-h1">It's not data. It's the endpoints.</h1>
+    <p class="hero-lede">Transfer Family charges <code>$0.30/hour</code> per active SFTP/FTPS endpoint — about <strong>$216/month per server</strong>, on whether anyone connects or not. Two endpoints × 24 × 30 = 1,440 protocol-hours. Data transfer and connector calls together come to <strong>under $2/month.</strong></p>
+  </div>
+
+  <div class="section-block">
+    <h2>30-day cost by usage type</h2>
+    <svg viewBox="0 0 720 280" class="chart"><text x="210" y="47" class="bar-label">USE1-ProtocolHours</text><rect x="220" y="18" width="480.0" height="41" rx="3" fill="#f87171" opacity="0.85"/><text x="708" y="47" class="bar-value">$426.00 · 99.7%</text><text x="210" y="98" class="bar-label">USE1-UploadBytes</text><rect x="220" y="69" width="2.0" height="41" rx="3" fill="#60a5fa" opacity="0.85"/><text x="230" y="98" class="bar-value">$0.57 · 0.1%</text><text x="210" y="149" class="bar-label">USE1-DownloadBytes</text><rect x="220" y="120" width="2.0" height="41" rx="3" fill="#60a5fa" opacity="0.85"/><text x="230" y="149" class="bar-value">$0.05 · 0.0%</text><text x="210" y="200" class="bar-label">USE1-SFTPConnectorCall</text><rect x="220" y="170" width="2.0" height="41" rx="3" fill="#60a5fa" opacity="0.85"/><text x="230" y="200" class="bar-value">$0.61 · 0.1%</text><text x="210" y="251" class="bar-label">USE1-SFTPConnector-SendBytes</text><rect x="220" y="221" width="2.0" height="41" rx="3" fill="#60a5fa" opacity="0.85"/><text x="230" y="251" class="bar-value"><$0.01 · 0.0%</text></svg>
+    <div class="table-wrap" style="margin-top:18px">
+      <table class="srv-table">
+        <thead><tr><th>Usage type</th><th class="right">Cost</th><th class="right">Volume</th><th class="right">Share</th><th>Notes</th></tr></thead>
+        <tbody>
+        <tr class="row-hot">
+          <td><code>USE1-ProtocolHours</code></td>
+          <td class="right num">$426.00</td>
+          <td class="right">1,420 endpoint-hr</td>
+          <td class="right">99.70%</td>
+          <td class="mute">2 SFTP endpoints × 24/7</td>
+        </tr>
+        <tr class="">
+          <td><code>USE1-UploadBytes</code></td>
+          <td class="right num">$0.57</td>
+          <td class="right">14.3 GB</td>
+          <td class="right">0.13%</td>
+          <td class="mute">data inbound</td>
+        </tr>
+        <tr class="">
+          <td><code>USE1-DownloadBytes</code></td>
+          <td class="right num">$0.05</td>
+          <td class="right">1.2 GB</td>
+          <td class="right">0.01%</td>
+          <td class="mute">data outbound</td>
+        </tr>
+        <tr class="">
+          <td><code>USE1-SFTPConnectorCall</code></td>
+          <td class="right num">$0.61</td>
+          <td class="right">616 calls</td>
+          <td class="right">0.14%</td>
+          <td class="mute">outbound connector pushes</td>
+        </tr>
+        <tr class="">
+          <td><code>USE1-SFTPConnector-SendBytes</code></td>
+          <td class="right num"><$0.01</td>
+          <td class="right">0.003 GB</td>
+          <td class="right">0.00%</td>
+          <td class="mute"></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:14px">Source: <code>aws ce get-cost-and-usage</code>, filter <code>SERVICE=AWS Transfer Family</code>, period 2026-04-15 → 2026-05-15.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>Why endpoint hours dominate</h2>
+    <p>Transfer Family endpoints have minimum 1-hour billing granularity. There's no scale-to-zero and no idle discount. A server that handles one upload per day costs the same as one that handles a thousand. That makes <em>endpoint count</em> — not throughput — the only knob that matters.</p>
+    <p>For low-frequency outbound-only flows there's a much cheaper alternative: <strong>SFTP Connectors</strong> bill per-call (<code>$0.001/call</code> + bytes). Your existing 616 connector calls last month cost <strong>$0.61 total</strong>. For comparison, the connector path would need to make ~216,000 calls in a month to cost what one always-on endpoint costs.</p>
+  </div>
+</section>
+
+<section id="section-servers">
+  <div class="hero">
+    <div class="hero-eyebrow">Server inventory</div>
+    <h1 class="hero-h1">One does the work. One waits.</h1>
+    <p class="hero-lede">Both servers were created on the same day in November 2024 from the same CloudFormation template. They share zero runtime infrastructure — separate identity providers, IAM roles, log groups, and S3 buckets.</p>
+  </div>
+
+  <div class="section-block">
+    <div class="srv-cards">
+        <div class="srv-card srv-card-ok">
+          <div class="srv-card-head">
+            <div>
+              <div class="srv-card-name">EmpowerFreshProFTP</div>
+              <code class="srv-card-id">s-0bdf81d5a7f346358</code>
+            </div>
+            <span class="verdict-pill ok pill-lg">KEEP</span>
+          </div>
+          <div class="srv-card-grid">
+            <div class="srv-field"><div class="srv-field-label">Hostname</div><div class="srv-field-val">ftp.empowerfresh.com (production)</div></div>
+            <div class="srv-field"><div class="srv-field-label">S3 bucket</div><div class="srv-field-val"><code>empowerfresh.ftp-public</code></div></div>
+            <div class="srv-field"><div class="srv-field-label">Secrets prefix</div><div class="srv-field-val"><code>SFTPProd</code></div></div>
+            <div class="srv-field"><div class="srv-field-label">Created</div><div class="srv-field-val">2024-11-05</div></div>
+            <div class="srv-field"><div class="srv-field-label">Events · 30d</div><div class="srv-field-val">220,000</div></div>
+            <div class="srv-field"><div class="srv-field-label">Last session</div><div class="srv-field-val">live · seconds ago</div></div>
+          </div>
+          <div class="srv-card-foot">
+            <div class="srv-field-label">Recent users in log streams</div>
+            <div class="srv-card-users">yates · brcc · S4EF · brlf · qualityfruitef · tmk · …</div>
+          </div>
+          <p class="srv-card-purpose">Grocers and vendors read daily catalog drops and write back invoices/POS files. Heavy continuous traffic.</p>
+        </div>
+        <div class="srv-card srv-card-bad">
+          <div class="srv-card-head">
+            <div>
+              <div class="srv-card-name">EmpowerFreshDeliveryFTP</div>
+              <code class="srv-card-id">s-6eb74dd6520446a1b</code>
+            </div>
+            <span class="verdict-pill bad pill-lg">DELETE</span>
+          </div>
+          <div class="srv-card-grid">
+            <div class="srv-field"><div class="srv-field-label">Hostname</div><div class="srv-field-val">ftp.empowerfresh.delivery</div></div>
+            <div class="srv-field"><div class="srv-field-label">S3 bucket</div><div class="srv-field-val"><code>empowerfresh.ftp-test</code></div></div>
+            <div class="srv-field"><div class="srv-field-label">Secrets prefix</div><div class="srv-field-val"><code>SFTPDelivery</code></div></div>
+            <div class="srv-field"><div class="srv-field-label">Created</div><div class="srv-field-val">2024-11-05</div></div>
+            <div class="srv-field"><div class="srv-field-label">Events · 30d</div><div class="srv-field-val">0</div></div>
+            <div class="srv-field"><div class="srv-field-label">Last session</div><div class="srv-field-val">2024-11-07 (~18 months ago)</div></div>
+          </div>
+          <div class="srv-card-foot">
+            <div class="srv-field-label">Recent users in log streams</div>
+            <div class="srv-card-users">(none — only failed root-login scanners from internet)</div>
+          </div>
+          <p class="srv-card-purpose">Originally stood up for testing/pre-prod cutover. Adopted briefly Nov 5–7 2024, then never used.</p>
+        </div></div>
+  </div>
+</section>
+
+<section id="section-evidence">
+  <div class="hero">
+    <div class="hero-eyebrow">Evidence of disuse</div>
+    <h1 class="hero-h1">Side-by-side: a server in use, and a server impersonating one.</h1>
+    <p class="hero-lede">Both panels show daily session-event counts from CloudWatch Logs Insights for the 30 days ending 2026-05-15.</p>
+  </div>
+
+  <div class="grid-2 chart-grid">
+    <div class="section-block">
+      <h2>EmpowerFreshProFTP · session events / day</h2>
+      <svg viewBox="0 0 720 160" class="chart">
+      <defs><linearGradient id="g-prod" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#34d399" stop-opacity="0"/>
+      </linearGradient></defs>
+      <line x1="50" x2="708" y1="134.0" y2="134.0" class="grid"/><text x="43" y="137.0" class="axis" text-anchor="end">0k</text><line x1="50" x2="708" y1="105.9" y2="105.9" class="grid"/><text x="43" y="108.9" class="axis" text-anchor="end">2k</text><line x1="50" x2="708" y1="77.8" y2="77.8" class="grid"/><text x="43" y="80.8" class="axis" text-anchor="end">4k</text><line x1="50" x2="708" y1="49.7" y2="49.7" class="grid"/><text x="43" y="52.7" class="axis" text-anchor="end">6k</text><line x1="50" x2="708" y1="21.6" y2="21.6" class="grid"/><text x="43" y="24.6" class="axis" text-anchor="end">8k</text><path d="M50.0,134.0 L50.0,43.9 72.7,35.2 95.4,35.4 118.1,37.4 140.8,38.3 163.4,34.9 186.1,33.0 208.8,33.3 231.5,33.4 254.2,32.3 276.9,33.4 299.6,36.2 322.3,30.3 345.0,31.0 367.7,34.5 390.3,38.2 413.0,29.8 435.7,29.5 458.4,34.2 481.1,29.2 503.8,26.7 526.5,26.9 549.2,29.4 571.9,26.4 594.6,27.1 617.2,31.6 639.9,27.1 662.6,25.9 685.3,24.9 708.0,35.4 L708.0,134.0 Z" fill="url(#g-prod)" opacity="0.22"/>
+      <polyline points="50.0,43.9 72.7,35.2 95.4,35.4 118.1,37.4 140.8,38.3 163.4,34.9 186.1,33.0 208.8,33.3 231.5,33.4 254.2,32.3 276.9,33.4 299.6,36.2 322.3,30.3 345.0,31.0 367.7,34.5 390.3,38.2 413.0,29.8 435.7,29.5 458.4,34.2 481.1,29.2 503.8,26.7 526.5,26.9 549.2,29.4 571.9,26.4 594.6,27.1 617.2,31.6 639.9,27.1 662.6,25.9 685.3,24.9 708.0,35.4" fill="none" stroke="#34d399" stroke-width="2"/>
+      <text x="50.0" y="153.0" class="axis" text-anchor="start">04-15</text><text x="367.7" y="153.0" class="axis" text-anchor="middle">04-29</text><text x="708.0" y="153.0" class="axis" text-anchor="end">05-14</text>
+    </svg>
+      <p class="sub" style="margin-top:10px">~7,000 session events per day, every day. <strong>Last hour</strong>: live sessions from <code>yates</code>, <code>brcc</code>, <code>S4EF</code>, <code>brlf</code>, <code>qualityfruitef</code>, <code>tmk</code>.</p>
+      <details>
+        <summary>Sample log lines from prod</summary>
+        <pre class="log-sample">tmk.0409d50beb6f6b6bf5f7  OPEN  Path=/empowerfresh.ftp-public/tmk/20260513-catalog-100951.CSV  Mode=READ
+tmk.0409d50beb6f6b6bf5f7  OPEN  Path=/empowerfresh.ftp-public/tmk/Catalogs/20250707-catalog-161126.CSV  Mode=READ
+qualityfruitef.022777f59a49e418b892  OPEN  Path=/empowerfresh.ftp-public/qualityfruitef/...  Mode=READ
+brlf.009146dbad97e38dc00b  WRITE  Path=/empowerfresh.ftp-public/brlf/invoices/...  Mode=WRITE
+S4EF.03776ed444a72c875a4a  LOGIN  Method=publickey  Result=success</pre>
+      </details>
+    </div>
+    <div class="section-block">
+      <h2>EmpowerFreshDeliveryFTP · session events / day</h2>
+      <svg viewBox="0 0 720 160" class="chart">
+      <line x1="50" x2="708" y1="134.0" y2="134.0" class="grid"/><text x="43" y="137.0" class="axis" text-anchor="end">0k</text><line x1="50" x2="708" y1="104.0" y2="104.0" class="grid"/><text x="43" y="107.0" class="axis" text-anchor="end">2k</text><line x1="50" x2="708" y1="74.0" y2="74.0" class="grid"/><text x="43" y="77.0" class="axis" text-anchor="end">4k</text><line x1="50" x2="708" y1="44.0" y2="44.0" class="grid"/><text x="43" y="47.0" class="axis" text-anchor="end">6k</text><line x1="50" x2="708" y1="14.0" y2="14.0" class="grid"/><text x="43" y="17.0" class="axis" text-anchor="end">8k</text>
+      <line x1="50" y1="134.0" x2="708" y2="134.0" stroke="#475569" stroke-width="2"/>
+      <text x="50.0" y="153.0" class="axis" text-anchor="start">04-15</text><text x="390.3" y="153.0" class="axis" text-anchor="middle">04-30</text><text x="708.0" y="153.0" class="axis" text-anchor="end">05-14</text><text x="360" y="80" class="overlay" text-anchor="middle">zero legitimate sessions</text>
+    </svg>
+      <p class="sub" style="margin-top:10px">Zero legitimate sessions in 30 days. Only the <code>ERRORS</code> stream receives traffic — internet scanners trying <code>root</code> from China-allocated IP ranges (<code>118.213.x.x</code>, <code>156.227.x.x</code>).</p>
+      <details>
+        <summary>Sample log lines from delivery (all attacks)</summary>
+        <pre class="log-sample">2026-04-15T00:30:33  AUTH_FAILURE  Method=password  User=root  SourceIP=118.213.136.182
+2026-04-15T01:09:03  AUTH_FAILURE  Method=password  User=root  SourceIP=156.227.232.239
+2026-04-15T01:09:04  AUTH_FAILURE  Method=password  User=root  SourceIP=156.227.232.239
+2026-04-15T01:09:05  AUTH_FAILURE  Method=password  User=root  SourceIP=156.227.232.239
+2026-04-15T01:09:07  AUTH_FAILURE  Method=password  User=root  SourceIP=156.227.232.239</pre>
+      </details>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h2>Log-stream age tells the same story</h2>
+    <p>Each authenticated SFTP session creates a CloudWatch log stream named <code>&lt;username&gt;.&lt;session-id&gt;</code>. For <code>EmpowerFreshDeliveryFTP</code>, the five most recent <em>user</em> streams all end on <strong>2024-11-06 / 2024-11-07</strong>. The only stream with recent timestamps is <code>ERRORS</code>, which logs failed auth attempts.</p>
+    <pre class="log-sample">ERRORS                                  last_event=2026-05-14T18:32:00  (attack traffic)
+rdscref.002590c8ed6a7d654a8b           last_event=2024-11-07T07:57:05  ← last real session
+rdscref.0030f56f81f08b0040a4           last_event=2024-11-07T07:57:01
+rdscref.0062733e89ab138d008e           last_event=2024-11-06T22:19:20
+rdscref.0022a0969bd08dba1c56           last_event=2024-11-06T22:19:14</pre>
+  </div>
+</section>
+
+<section id="section-step-preflight">
+  <div class="hero">
+    <div class="hero-eyebrow">Step 1 of 5</div>
+    <h1 class="hero-h1">Pre-flight checks</h1>
+    <p class="hero-lede">Confirm with your own eyes that nothing is connecting to the delivery server before changing anything.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>1.1 · Confirm zero recent sessions</h2>
+    <p>Show that the last 30 days of session events in the user-session streams are empty (only the <code>ERRORS</code> stream should have data). If anything besides <code>ERRORS</code> has events newer than a few months, stop and investigate.</p>
+<pre class="cmd"># Most recently active log streams on the delivery server
+aws logs describe-log-streams \
+  --profile claude --region us-east-1 \
+  --log-group-name /aws/transfer/s-6eb74dd6520446a1b \
+  --order-by LastEventTime --descending --max-items 10 \
+  --query 'logStreams[].[logStreamName,lastEventTimestamp]' --output table</pre>
+    <p class="sub">Expected: only <code>ERRORS</code> has a recent timestamp; every other stream is dated 2024.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>1.2 · Search the codebase</h2>
+    <p>Grep every repo for any client-side reference to the delivery server. None of these should return code paths that actively connect:</p>
+<pre class="cmd"># Run from ~/Git
+for repo in EmpowerFresh-SK EmpowerFresh-ETL glue-etl-pipelines ML_SERVICE \
+            EmpowerFresh-CloudFormation EF-Price-Scraper etlify EmpowerFresh-Onboarding; do
+  grep -rIl --exclude-dir=node_modules --exclude-dir=.git \
+    -e 'ftp.empowerfresh.delivery' \
+    -e 's-6eb74dd6520446a1b' \
+    -e 'omylwiohba' \
+    -e 'SFTPDelivery' \
+    -e 'EmpowerFreshDeliveryFTP' \
+    "$repo" 2>/dev/null
+done</pre>
+    <p>Local search results (May 2026-05-15):</p>
+    <div class="table-wrap">
+      <table class="srv-table">
+        <thead><tr><th>Repo</th><th>Path</th><th>What</th><th>Severity</th></tr></thead>
+        <tbody>
+        <tr>
+          <td><code>EmpowerFresh-SK</code></td>
+          <td><code>cli/utils.ts:159,178</code></td>
+          <td>Lists `empowerfresh.ftp-test` as an option in an interactive S3 copy menu</td>
+          <td><span class="pill ok">non-blocking</span></td>
+        </tr>
+        <tr>
+          <td><code>EmpowerFresh-CloudFormation</code></td>
+          <td><code>ECS/EmpowerFreshDeliveryFTP/*</code></td>
+          <td>Create/Update/Delete/Validate shell scripts + CFN template for this stack</td>
+          <td><span class="pill ok">non-blocking</span></td>
+        </tr></tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:12px">No reference points at the SFTP <em>server</em>. The only hits reference the S3 <em>bucket</em> behind it (which is not deleted by this work) or live inside the stack's own repo directory.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>1.3 · Check Secrets Manager</h2>
+    <p>The Lambda identity provider reads from <code>SFTPDelivery/&lt;username&gt;</code>. Those secrets are <strong>not</strong> CFN-managed and will survive a stack delete. Inventory them so you can clean them up in step 4.</p>
+<pre class="cmd">aws secretsmanager list-secrets \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --filters Key=name,Values=SFTPDelivery \
+  --query 'SecretList[].[Name,LastChangedDate]' --output table</pre>
+    <p class="sub">If the list is short and you recognize every username, you're safe to delete them in step 4. If anything looks unfamiliar, pause.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>1.4 · Check the S3 bucket</h2>
+    <p>The bucket <code>empowerfresh.ftp-test</code> is <em>not</em> deleted by the stack. It also still receives writes from non-SFTP paths (a recent April 2026 invoice batch landed under <code>russdavis/gohugos/Invoice/</code>). Confirm:</p>
+<pre class="cmd"># Most recent objects, ignoring zero-byte placeholders
+aws s3 ls s3://empowerfresh.ftp-test/ --profile claude --recursive --summarize | tail -30</pre>
+    <p class="sub">Decision needed: leave the bucket alone (cheapest, simplest) or migrate the recent contents elsewhere and decommission the bucket in a follow-up. <strong>The bucket decision is independent of the SFTP server decision.</strong></p>
+  </div>
+
+  <div class="section-block">
+    <h2>1.5 · Note the orphan ACM certificate</h2>
+    <p>The Transfer server has an ACM certificate attached (<code>arn:aws:acm:us-east-1:061051251509:certificate/8eb9871d-…</code>) even though SFTP doesn't use it (certs are for FTPS/FTP). The cert was added outside CloudFormation and will not be deleted with the stack. ACM certs are free to keep, but you can delete the orphan in step 4.</p>
+  </div>
+</section>
+
+<section id="section-step-disable">
+  <div class="hero">
+    <div class="hero-eyebrow">Step 2 of 5</div>
+    <h1 class="hero-h1">Disable the server and wait</h1>
+    <p class="hero-lede">A reversible dry run. Take the endpoint offline for a few days; if anyone or anything was secretly depending on it, they'll complain. Cost continues during the wait — endpoint-hours still bill while OFFLINE — but this is the safety net.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>2.1 · Stop the server</h2>
+<pre class="cmd">aws transfer stop-server \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --server-id s-6eb74dd6520446a1b</pre>
+    <p class="sub">The state goes <code>ONLINE → STOPPING → OFFLINE</code>. New connection attempts will fail with a TCP-level reject; existing sessions terminate. No data is touched.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>2.2 · Confirm it's offline</h2>
+<pre class="cmd">aws transfer describe-server \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --server-id s-6eb74dd6520446a1b \
+  --query 'Server.State'</pre>
+    <p class="sub">Expected: <code>"OFFLINE"</code>.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>2.3 · Wait 3–7 days</h2>
+    <p>A week is generous given there are no legitimate users to begin with, but covers weekly batch jobs. Set a calendar reminder. During the wait:</p>
+    <ul class="bullets">
+      <li>Watch the <code>ERRORS</code> stream — failed-auth scanner traffic will continue and is expected. Anything new from an internal IP would be a red flag.</li>
+      <li>Watch for support tickets, Slack mentions, or PagerDuty alerts that name "delivery FTP" or <code>ftp.empowerfresh.delivery</code>.</li>
+      <li>If anything comes up, <code>start-server</code> reverses this step immediately.</li>
+    </ul>
+  </div>
+
+  <div class="section-block">
+    <h2>2.4 · Re-enable (rollback) if anything breaks</h2>
+<pre class="cmd">aws transfer start-server \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --server-id s-6eb74dd6520446a1b</pre>
+  </div>
+</section>
+
+<section id="section-step-delete">
+  <div class="hero">
+    <div class="hero-eyebrow">Step 3 of 5</div>
+    <h1 class="hero-h1">Delete the CloudFormation stack</h1>
+    <p class="hero-lede">Once the wait period passes with no complaints, delete the entire stack in one shot. This is the moment the bill actually drops.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>3.1 · What gets deleted</h2>
+    <p>The stack owns every resource specific to the delivery SFTP path. Confirmed via <code>list-stack-resources</code>:</p>
+    <div class="table-wrap">
+      <table class="srv-table">
+        <thead><tr><th>Type</th><th>Logical ID</th><th>Physical ID</th></tr></thead>
+        <tbody>
+<tr><td><code>AWS::Transfer::Server</code></td><td>TransferServer</td><td><code>s-6eb74dd6520446a1b</code></td></tr><tr><td><code>AWS::Route53::RecordSet</code></td><td>SFTPCustomHostnameRecord</td><td><code>ftp.empowerfresh.delivery</code></td></tr><tr><td><code>AWS::ApiGateway::RestApi</code></td><td>CustomIdentityProviderApi</td><td><code>omylwiohba</code></td></tr><tr><td><code>AWS::ApiGateway::Stage</code></td><td>ApiStage</td><td><code>prod</code></td></tr><tr><td><code>AWS::ApiGateway::Deployment</code></td><td>ApiDeployment</td><td><code>af3k0g</code></td></tr><tr><td><code>AWS::Lambda::Function</code></td><td>GetUserConfigLambda</td><td><code>…GetUserConfigLambda-Vj7n0iv7qCqS</code></td></tr><tr><td><code>AWS::IAM::Role (×4)</code></td><td>TransferFTPUserRole / Lambda* / Logging*</td><td><code>incl. TransferFTPUserRoleDelivery</code></td></tr><tr><td><code>AWS::Logs::LogGroup (×3)</code></td><td>Transfer / Lambda / ApiGateway</td><td><code>/aws/transfer/s-6eb74dd6520446a1b + 2</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <h2>3.2 · Run the delete</h2>
+<pre class="cmd"># Snapshot the template first so re-creation stays trivial
+aws cloudformation get-template \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --stack-name EmpowerFreshDeliveryFTP > /tmp/EmpowerFreshDeliveryFTP.template.json
+
+# Delete
+aws cloudformation delete-stack \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --stack-name EmpowerFreshDeliveryFTP
+
+# Wait for completion (typically 2–4 minutes for a Transfer + ApiGw + Lambda combo)
+aws cloudformation wait stack-delete-complete \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --stack-name EmpowerFreshDeliveryFTP</pre>
+    <p class="sub">There is already a <code>Delete-EmpowerFreshDeliveryFTP.sh</code> in <code>EmpowerFresh-CloudFormation/ECS/EmpowerFreshDeliveryFTP/</code> that runs the equivalent command. It's a one-liner that calls <code>delete-stack</code>.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>3.3 · Confirm the delete</h2>
+<pre class="cmd">aws cloudformation describe-stacks \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --stack-name EmpowerFreshDeliveryFTP 2>&amp;1 | grep -i 'does not exist'
+
+aws transfer list-servers \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --query 'Servers[?ServerId==`s-6eb74dd6520446a1b`]'</pre>
+    <p class="sub">First command should print "Stack with id EmpowerFreshDeliveryFTP does not exist". Second command should return <code>[]</code>.</p>
+  </div>
+</section>
+
+<section id="section-step-cleanup">
+  <div class="hero">
+    <div class="hero-eyebrow">Step 4 of 5</div>
+    <h1 class="hero-h1">Clean up orphans</h1>
+    <p class="hero-lede">Three things survive the stack delete and need a separate touch. None of them are billing in any meaningful way — this step is hygiene, not cost.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>4.1 · Secrets Manager · <code>SFTPDelivery/*</code></h2>
+    <p>The identity-provider Lambda is gone, so these secrets are unreachable, but they still exist. Decommission them — Secrets Manager bills $0.40/secret/month and credentials shouldn't outlive the service that used them. Use <code>--recovery-window-in-days 7</code> so you can recover if a name turns out to still be referenced.</p>
+<pre class="cmd"># Get the list
+aws secretsmanager list-secrets \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --filters Key=name,Values=SFTPDelivery \
+  --query 'SecretList[].Name' --output text
+
+# Delete each (7-day recovery window)
+for s in $(aws secretsmanager list-secrets \
+    --profile &lt;your-profile&gt; --region us-east-1 \
+    --filters Key=name,Values=SFTPDelivery \
+    --query 'SecretList[].Name' --output text); do
+  aws secretsmanager delete-secret \
+    --profile &lt;your-profile&gt; --region us-east-1 \
+    --secret-id "$s" --recovery-window-in-days 7
+done</pre>
+  </div>
+
+  <div class="section-block">
+    <h2>4.2 · Orphan ACM certificate (optional)</h2>
+    <p>ACM certs are free to keep, but the cert attached to the deleted server is now unused. Cert ARN: <code>arn:aws:acm:us-east-1:061051251509:certificate/8eb9871d-6ec5-4bde-81af-9d051aaf1ed6</code>.</p>
+<pre class="cmd"># Confirm nothing else uses it
+aws acm describe-certificate \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --certificate-arn arn:aws:acm:us-east-1:061051251509:certificate/8eb9871d-6ec5-4bde-81af-9d051aaf1ed6 \
+  --query 'Certificate.{Domain:DomainName,InUseBy:InUseBy}'
+
+# If InUseBy is empty, delete
+aws acm delete-certificate \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --certificate-arn arn:aws:acm:us-east-1:061051251509:certificate/8eb9871d-6ec5-4bde-81af-9d051aaf1ed6</pre>
+  </div>
+
+  <div class="section-block">
+    <h2>4.3 · S3 bucket <code>empowerfresh.ftp-test</code> · decide separately</h2>
+    <p>Three options, in order of safest → most aggressive:</p>
+    <ul class="bullets">
+      <li><strong>Leave it.</strong> Cheapest path. Storage costs are pennies (576 KB total at last check). Some non-SFTP code (the SK CLI move tool) still references it as a destination.</li>
+      <li><strong>Lifecycle-policy old content to Glacier.</strong> If you want to keep historical files reachable but stop them appearing in active inventories.</li>
+      <li><strong>Migrate + delete the bucket.</strong> Move the April 2026 invoice files (<code>russdavis/gohugos/Invoice/*</code>) to wherever they belong long-term, remove the bucket from the SK CLI menu (<code>EmpowerFresh-SK/cli/utils.ts:159,178</code>), then empty and delete the bucket.</li>
+    </ul>
+    <p class="risk-note"><strong>Recommendation:</strong> leave the bucket alone for now. It's $0/month in practice. Bucket cleanup is a separate decision that doesn't need to gate the SFTP-server savings.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>4.4 · Archive the CloudFormation template directory (optional)</h2>
+    <p>Move <code>EmpowerFresh-CloudFormation/ECS/EmpowerFreshDeliveryFTP/</code> into an <code>archive/</code> sibling so it's clearly historical, or leave it for reproducibility. Either is fine.</p>
+  </div>
+</section>
+
+<section id="section-step-verify">
+  <div class="hero">
+    <div class="hero-eyebrow">Step 5 of 5</div>
+    <h1 class="hero-h1">Verify the savings</h1>
+    <p class="hero-lede">Confirm with the bill, not with assumptions.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>5.1 · Same-day check</h2>
+    <p>An hour or two after the stack delete, this should show only the prod server's ServerId:</p>
+<pre class="cmd">aws transfer list-servers \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --query 'Servers[].ServerId'</pre>
+  </div>
+
+  <div class="section-block">
+    <h2>5.2 · Next-day check (Cost Explorer)</h2>
+    <p>Cost Explorer data lags by 24–48 hours. Once it catches up, the daily <code>ProtocolHours</code> usage should drop from <strong>~48 hrs/day → ~24 hrs/day</strong>.</p>
+<pre class="cmd">aws ce get-cost-and-usage \
+  --profile claude --region us-east-1 \
+  --time-period Start=$(date -v-7d +%Y-%m-%d),End=$(date +%Y-%m-%d) \
+  --granularity DAILY \
+  --metrics UsageQuantity \
+  --filter '{"And":[
+      {"Dimensions":{"Key":"SERVICE","Values":["AWS Transfer Family"]}},
+      {"Dimensions":{"Key":"USAGE_TYPE","Values":["USE1-ProtocolHours"]}}]}'</pre>
+  </div>
+
+  <div class="section-block">
+    <h2>5.3 · Full-month check</h2>
+    <p>The first full month with one server should show ~720 protocol-hours @ $216 instead of the current ~1,420 @ $432.</p>
+  </div>
+</section>
+
+<section id="section-rollback">
+  <div class="hero">
+    <div class="hero-eyebrow">Safety net</div>
+    <h1 class="hero-h1">Rollback plan</h1>
+    <p class="hero-lede">Every step is reversible; the further along, the more work the reversal is.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>If you regret it before step 3</h2>
+    <p>The server is just <code>OFFLINE</code>. One command brings it back:</p>
+<pre class="cmd">aws transfer start-server \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --server-id s-6eb74dd6520446a1b</pre>
+  </div>
+
+  <div class="section-block">
+    <h2>If you regret it after step 3</h2>
+    <p>The stack is gone — but the template is in source control and the snapshot you took in step 3.2 is on disk. Redeploying takes one command:</p>
+<pre class="cmd">cd ~/Git/EmpowerFresh-CloudFormation/ECS/EmpowerFreshDeliveryFTP/
+./Create-EmpowerFreshDeliveryFTP.sh</pre>
+    <p class="risk-note"><strong>Caveats:</strong> the new server will get a <em>new</em> ServerId (so anything that hardcoded <code>s-6eb74dd6520446a1b</code> would need updating — we confirmed none does). The Route53 record points to a new hostname target managed by the new stack. The Secrets Manager entries you deleted in step 4.1 need to be recreated for any users — restore from the 7-day recovery window with <code>restore-secret</code>, or recreate from a password manager.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>If you regret it after step 4</h2>
+    <p>Secrets in their 7-day recovery window can be restored:</p>
+<pre class="cmd">aws secretsmanager restore-secret \
+  --profile &lt;your-profile&gt; --region us-east-1 \
+  --secret-id SFTPDelivery/&lt;username&gt;</pre>
+    <p>After the 7-day window closes, secrets are unrecoverable. That's a feature, not a bug — but it's why this guide uses the 7-day recovery window, not immediate force-delete.</p>
+  </div>
+</section>
+
+    <footer>
+      Cost: <code>aws ce get-cost-and-usage</code> · Activity: <code>aws logs filter-log-events</code> + Insights ·
+      Inventory: <code>aws transfer list-servers</code>, <code>describe-server</code>, <code>cloudformation list-stack-resources</code>.
+      Generated 2026-05-15.
+    </footer>
+  </main>
+</div>
+<script>
+  function show(target) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById('section-' + target);
+    if (sec) sec.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.target === target));
+    if (history && history.replaceState) history.replaceState(null, '', '#' + target);
+    window.scrollTo(0, 0);
+  }
+  document.body.addEventListener('click', e => {
+    const link = e.target.closest('[data-target]');
+    if (link) { e.preventDefault(); show(link.dataset.target); }
+  });
+  const initial = (location.hash || '#summary').slice(1);
+  show(initial);
+</script>
+</body>
+</html>
