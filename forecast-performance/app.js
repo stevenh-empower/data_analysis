@@ -45,6 +45,26 @@ async function init() {
   buildFullMetricsTable();
   buildCharts();
   setupNavScroll();
+  setupMobileMenu();
+}
+
+function setupMobileMenu() {
+  const aside = document.getElementById('sidebar');
+  const toggle = aside.querySelector('.menu-toggle');
+  if (!toggle) return;
+  toggle.addEventListener('click', () => {
+    const open = aside.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  // Collapse after clicking a nav link on mobile
+  aside.querySelectorAll('.nav-body a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.matchMedia('(max-width: 760px)').matches) {
+        aside.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
 }
 
 function buildSidebarNav() {
