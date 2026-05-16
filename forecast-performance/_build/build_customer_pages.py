@@ -20,7 +20,7 @@ TEMPLATE = """<!DOCTYPE html>
 
   <div class="cust-header">
     <div class="logo">
-      <img src="../../assets/logo-wide-green.svg" alt="EmpowerFresh">
+      <img src="../../assets/logo-wide-green.png" alt="EmpowerFresh AI">
     </div>
     <div class="who">
       <div class="name">{name}</div>
