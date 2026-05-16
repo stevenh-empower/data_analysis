@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Forecast Performance — AI vs Legacy · 2026-05-16</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <img src="assets/logo-wide-white.svg" alt="EmpowerFresh">
+      <div class="brand-sub">Forecast Performance Report · 2026-05-16</div>
+    </div>
+
+    <div class="nav-section">Overview</div>
+    <a class="nav-item active" href="#headline">Headline</a>
+    <a class="nav-item" href="#overall">Overall win rates</a>
+    <a class="nav-item" href="#coverage">Coverage expansion (V2)</a>
+
+    <div class="nav-section">Detail</div>
+    <a class="nav-item" href="#per-customer">Per-customer summary</a>
+    <a class="nav-item" href="#charts">Per-customer charts</a>
+    <a class="nav-item" href="#full-table">Full metrics table</a>
+
+    <div class="nav-section">Customer reports</div>
+    <div id="cust-nav"></div>
+
+    <div class="nav-section">Downloads</div>
+    <a class="nav-item" href="#downloads">All files</a>
+  </aside>
+
+  <main>
+    <header class="page-header">
+      <h1>Forecast Performance: AI vs Legacy</h1>
+      <p class="lede">Head-to-head accuracy of the new AI demand forecasting (V2) vs the legacy daily-sales forecast — measured on the same (store, product) pairs over the last 60 days.</p>
+      <div class="meta">Run · <strong>2026-05-16</strong> · 12 grocers · 158 stores · 60,765 (store, product) pairs · source: <code>analysis_product_sales_performance</code> + <code>analysis_product_demand</code></div>
+    </header>
+
+    <!-- HEADLINE -->
+    <section class="section" id="headline">
+      <h2>Headline</h2>
+      <div class="cards" id="headline-cards"></div>
+      <div class="note" style="margin-top:14px">
+        AI wins MAE 80% of pairs, RMSE 87%, R² 88%. Coverage triples: V2 forecasts <strong>+189% more pairs</strong> and <strong>+226% more products</strong> than the legacy system, including <strong>21,384 unit-sold pairs</strong> that legacy never forecasted.
+      </div>
+    </section>
+
+    <!-- OVERALL WIN RATE TABLE -->
+    <section class="section" id="overall">
+      <h2>Overall head-to-head win rate <span class="h2-meta">All customers, all overlapping pairs</span></h2>
+      <div class="panel">
+        <table class="metrics" id="overall-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>What it measures</th>
+              <th style="width:34%">Win distribution</th>
+              <th class="num">Pairs</th>
+              <th class="num">AI win</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- COVERAGE -->
+    <section class="section" id="coverage">
+      <h2>Coverage expansion (Legacy vs V2)</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Pairs forecasted</h3>
+          <div class="chart-wrap"><canvas id="coverageBar"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Case vs Unit pairs (total)</h3>
+          <div class="chart-wrap"><canvas id="caseUnitBar"></canvas></div>
+          <p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">Legacy forecasted just 19 unit-sold pairs out of 28,159 (0.07%). V2 forecasts 21,384 unit pairs — unit-level forecasting is effectively a V2-only capability.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PER CUSTOMER SUMMARY -->
+    <section class="section" id="per-customer">
+      <h2>Per-customer summary</h2>
+      <div class="panel" style="padding:6px 6px">
+        <table class="metrics" id="per-cust-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th class="num">Stores</th>
+              <th class="num">Products</th>
+              <th class="num">Pairs (V2)</th>
+              <th class="num">Pairs (legacy)</th>
+              <th class="num">Δ pairs</th>
+              <th class="num">AI win % (MAE)</th>
+              <th class="num">AI win % (RMSE)</th>
+              <th>Customer report</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CHARTS -->
+    <section class="section" id="charts">
+      <h2>Per-customer charts</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">AI win rate by customer</h3>
+          <div class="chart-wrap tall"><canvas id="winRateBar"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Mean error: AI vs Legacy (MAE, cases)</h3>
+          <div class="chart-wrap tall"><canvas id="maeBar"></canvas></div>
+          <p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">Lower bars = more accurate. AI is consistently 25–40% lower error across all customers.</p>
+        </div>
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Coverage growth (V2 vs Legacy pairs)</h3>
+          <div class="chart-wrap tall"><canvas id="coverageCust"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3 style="margin:0 0 12px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">MAPE: AI vs Legacy</h3>
+          <div class="chart-wrap tall"><canvas id="mapeBar"></canvas></div>
+          <p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">Percentage error per pair (median). Lower is better.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL METRICS TABLE -->
+    <section class="section" id="full-table">
+      <h2>Full metrics table <span class="h2-meta">mean values per customer; lower is better for MAE/RMSE/MAPE; higher is better for R² and Within-2</span></h2>
+      <div class="panel" style="padding:6px 6px;overflow-x:auto">
+        <table class="metrics" id="full-metrics">
+          <thead>
+            <tr>
+              <th rowspan="2">Customer</th>
+              <th class="num" colspan="2">MAE</th>
+              <th class="num" colspan="2">RMSE</th>
+              <th class="num" colspan="2">MAPE</th>
+              <th class="num" colspan="2">R²</th>
+              <th class="num" colspan="2">Within-2 cases</th>
+            </tr>
+            <tr>
+              <th class="num">AI</th><th class="num">Legacy</th>
+              <th class="num">AI</th><th class="num">Legacy</th>
+              <th class="num">AI</th><th class="num">Legacy</th>
+              <th class="num">AI</th><th class="num">Legacy</th>
+              <th class="num">AI</th><th class="num">Legacy</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOWNLOADS -->
+    <section class="section" id="downloads">
+      <h2>Downloads</h2>
+      <div class="downloads">
+        <a class="dl" href="downloads/forecast-performance-comparison.xlsx" download>
+          <div>
+            <div class="dl-title">Forecast performance comparison</div>
+            <div class="dl-sub">Per-customer + overall + universe + detail · all metrics</div>
+          </div>
+          <div class="dl-icon">XLSX</div>
+        </a>
+        <a class="dl" href="downloads/legacy-vs-v2-forecasting.xlsx" download>
+          <div>
+            <div class="dl-title">Legacy vs V2 coverage</div>
+            <div class="dl-sub">Pair / product counts · case vs unit breakdown</div>
+          </div>
+          <div class="dl-icon">XLSX</div>
+        </a>
+        <a class="dl" href="downloads/detail.csv" download>
+          <div>
+            <div class="dl-title">Pair-level detail</div>
+            <div class="dl-sub">60,766 rows · one row per (customer, store, product)</div>
+          </div>
+          <div class="dl-icon">CSV</div>
+        </a>
+        <a class="dl" href="downloads/universe-per-customer.csv" download>
+          <div>
+            <div class="dl-title">Universe per customer</div>
+            <div class="dl-sub">Unique stores, products, pairs by customer</div>
+          </div>
+          <div class="dl-icon">CSV</div>
+        </a>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      <a href="../">data_analysis</a> · generated 2026-05-16
+    </div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

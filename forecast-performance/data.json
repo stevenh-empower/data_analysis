@@ -1,0 +1,1061 @@
+{
+  "generated_at": "2026-05-16",
+  "window": "Last 60 days (analysis_product_sales_performance vs analysis_product_demand)",
+  "overall": {
+    "unique_products": 10464,
+    "unique_pairs": 60765,
+    "unique_stores": 158,
+    "pairs_with_winning_source": 60765,
+    "pairs_with_ai": 60765,
+    "pairs_with_both": 29654,
+    "pairs_ai_only": 31111,
+    "metrics": {
+      "mae": {
+        "n": 29310,
+        "ai_mean": 2.295980948481747,
+        "sales_mean": 3.270123660866599,
+        "ai_median": 1.1314,
+        "sales_median": 1.59695,
+        "mean_diff": -0.9741427123848516,
+        "median_diff": -0.3755,
+        "ai_win_rate": 0.805049471170249
+      },
+      "mape": {
+        "n": 28563,
+        "ai_mean": 0.5572611630430977,
+        "sales_mean": 0.83412487833911,
+        "ai_median": 0.4796,
+        "sales_median": 0.6978,
+        "mean_diff": -0.2768637152960123,
+        "median_diff": -0.213,
+        "ai_win_rate": 0.7842313482477331
+      },
+      "r2": {
+        "n": 28440,
+        "ai_mean": -1.05985452883263,
+        "sales_mean": -1.543208466947961,
+        "ai_median": 0.1085,
+        "sales_median": -0.55535,
+        "mean_diff": 0.4833539381153305,
+        "median_diff": 0.6482,
+        "ai_win_rate": 0.8832630098452883
+      },
+      "rmse": {
+        "n": 29310,
+        "ai_mean": 2.97573285226885,
+        "sales_mean": 4.342410453770045,
+        "ai_median": 1.4162,
+        "sales_median": 2.127,
+        "mean_diff": -1.366677601501194,
+        "median_diff": -0.59335,
+        "ai_win_rate": 0.8676219720232002
+      },
+      "within2": {
+        "n": 29310,
+        "ai_mean": 0.9832626850904128,
+        "sales_mean": 0.9709811975435004,
+        "ai_median": 1,
+        "sales_median": 1,
+        "mean_diff": 0.01228148754691232,
+        "median_diff": 0,
+        "ai_win_rate": 0.1228590924599113
+      }
+    },
+    "legacy_v2": {
+      "legacy_pairs": 28159,
+      "legacy_products": 3895,
+      "v2_pairs": 81477,
+      "v2_products": 12699,
+      "delta_pairs": 53318,
+      "delta_products": 8804,
+      "delta_pairs_pct": 1.893462125785717,
+      "delta_products_pct": 2.260333761232349
+    }
+  },
+  "customers": [
+    {
+      "id": 4,
+      "name": "Rays",
+      "slug": "rays",
+      "unique_products": 712,
+      "unique_pairs": 2259,
+      "unique_stores": 6,
+      "pairs_with_winning_source": 1638,
+      "pairs_with_ai": 1638,
+      "pairs_with_both": 759,
+      "pairs_ai_only": 879,
+      "metrics": {
+        "mae": {
+          "n": 756,
+          "ai_mean": 2.214096164021164,
+          "sales_mean": 3.091350396825397,
+          "ai_median": 1.427,
+          "sales_median": 1.9441,
+          "mean_diff": -0.8772542328042329,
+          "median_diff": -0.4636,
+          "ai_win_rate": 0.8531746031746031
+        },
+        "mape": {
+          "n": 754,
+          "ai_mean": 0.5414405835543766,
+          "sales_mean": 0.8976364721485411,
+          "ai_median": 0.4833,
+          "sales_median": 0.73715,
+          "mean_diff": -0.3561958885941644,
+          "median_diff": -0.2559500000000001,
+          "ai_win_rate": 0.8461538461538461
+        },
+        "r2": {
+          "n": 754,
+          "ai_mean": -0.3685177718832892,
+          "sales_mean": -1.130852519893899,
+          "ai_median": 0.11875,
+          "sales_median": -0.59585,
+          "mean_diff": 0.7623347480106102,
+          "median_diff": 0.6813,
+          "ai_win_rate": 0.8859416445623343
+        },
+        "rmse": {
+          "n": 756,
+          "ai_mean": 2.752467724867725,
+          "sales_mean": 4.030216402116402,
+          "ai_median": 1.75075,
+          "sales_median": 2.5335,
+          "mean_diff": -1.277748677248677,
+          "median_diff": -0.7156499999999999,
+          "ai_win_rate": 0.8994708994708994
+        },
+        "within2": {
+          "n": 756,
+          "ai_mean": 0.980638888888889,
+          "sales_mean": 0.972315873015873,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.008323015873015874,
+          "median_diff": 0,
+          "ai_win_rate": 0.07804232804232804
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 796,
+        "v2_pairs": 2259,
+        "delta_pairs": 1463,
+        "delta_pairs_pct": 1.837939698492462,
+        "legacy_products": 194,
+        "v2_products": 712,
+        "delta_products": 518,
+        "delta_products_pct": 2.670103092783505,
+        "case_pairs_legacy": 796,
+        "case_pairs_v2": 1322,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 937,
+        "case_products_legacy": 194,
+        "case_products_v2": 376,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 336
+      }
+    },
+    {
+      "id": 5,
+      "name": "Pruetts",
+      "slug": "pruetts",
+      "unique_products": 1056,
+      "unique_pairs": 5559,
+      "unique_stores": 11,
+      "pairs_with_winning_source": 4095,
+      "pairs_with_ai": 4095,
+      "pairs_with_both": 2036,
+      "pairs_ai_only": 2059,
+      "metrics": {
+        "mae": {
+          "n": 2019,
+          "ai_mean": 2.328675334323922,
+          "sales_mean": 3.2819426448737,
+          "ai_median": 1.2168,
+          "sales_median": 1.7169,
+          "mean_diff": -0.9532673105497772,
+          "median_diff": -0.3667,
+          "ai_win_rate": 0.8048538880633977
+        },
+        "mape": {
+          "n": 2002,
+          "ai_mean": 0.5476418581418581,
+          "sales_mean": 0.7936099900099901,
+          "ai_median": 0.4793500000000001,
+          "sales_median": 0.6738999999999999,
+          "mean_diff": -0.2459681318681319,
+          "median_diff": -0.18445,
+          "ai_win_rate": 0.7747252747252747
+        },
+        "r2": {
+          "n": 2001,
+          "ai_mean": -0.3447950024987506,
+          "sales_mean": -0.9415791604197902,
+          "ai_median": 0.1127,
+          "sales_median": -0.5593,
+          "mean_diff": 0.5967841579210394,
+          "median_diff": 0.6689,
+          "ai_win_rate": 0.9085457271364318
+        },
+        "rmse": {
+          "n": 2019,
+          "ai_mean": 2.972488954928182,
+          "sales_mean": 4.377204259534423,
+          "ai_median": 1.5268,
+          "sales_median": 2.3002,
+          "mean_diff": -1.404715304606241,
+          "median_diff": -0.5778999999999999,
+          "ai_win_rate": 0.8707280832095097
+        },
+        "within2": {
+          "n": 2019,
+          "ai_mean": 0.9710509162951955,
+          "sales_mean": 0.9566719167904902,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.0143789995047053,
+          "median_diff": 0,
+          "ai_win_rate": 0.1253095591877167
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 1858,
+        "v2_pairs": 5559,
+        "delta_pairs": 3701,
+        "delta_pairs_pct": 1.991926803013994,
+        "legacy_products": 283,
+        "v2_products": 1056,
+        "delta_products": 773,
+        "delta_products_pct": 2.731448763250883,
+        "case_pairs_legacy": 1858,
+        "case_pairs_v2": 3274,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 2285,
+        "case_products_legacy": 283,
+        "case_products_v2": 619,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 437
+      }
+    },
+    {
+      "id": 36,
+      "name": "Lowes",
+      "slug": "lowes",
+      "unique_products": 1183,
+      "unique_pairs": 20285,
+      "unique_stores": 68,
+      "pairs_with_winning_source": 14065,
+      "pairs_with_ai": 14065,
+      "pairs_with_both": 8309,
+      "pairs_ai_only": 5756,
+      "metrics": {
+        "mae": {
+          "n": 8194,
+          "ai_mean": 2.870267293141323,
+          "sales_mean": 3.837385062240664,
+          "ai_median": 1.21875,
+          "sales_median": 1.6791,
+          "mean_diff": -0.967117769099341,
+          "median_diff": -0.3626,
+          "ai_win_rate": 0.8173053453746644
+        },
+        "mape": {
+          "n": 8134,
+          "ai_mean": 0.5566769609048438,
+          "sales_mean": 0.9186182198180477,
+          "ai_median": 0.4896,
+          "sales_median": 0.75945,
+          "mean_diff": -0.3619412589132038,
+          "median_diff": -0.2555,
+          "ai_win_rate": 0.817924760265552
+        },
+        "r2": {
+          "n": 8131,
+          "ai_mean": -1.019639466240315,
+          "sales_mean": -1.107617193457139,
+          "ai_median": 0.089,
+          "sales_median": -0.6206,
+          "mean_diff": 0.08797772721682454,
+          "median_diff": 0.698,
+          "ai_win_rate": 0.8958307711228631
+        },
+        "rmse": {
+          "n": 8194,
+          "ai_mean": 3.734649780327069,
+          "sales_mean": 5.024791249694899,
+          "ai_median": 1.52165,
+          "sales_median": 2.2344,
+          "mean_diff": -1.29014146936783,
+          "median_diff": -0.5922499999999999,
+          "ai_win_rate": 0.8739321454722968
+        },
+        "within2": {
+          "n": 8194,
+          "ai_mean": 0.9881268855259946,
+          "sales_mean": 0.9751912863070539,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.01293559921894069,
+          "median_diff": 0,
+          "ai_win_rate": 0.09726629240907982
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 9351,
+        "v2_pairs": 21456,
+        "delta_pairs": 12105,
+        "delta_pairs_pct": 1.29451395572666,
+        "legacy_products": 457,
+        "v2_products": 1243,
+        "delta_products": 786,
+        "delta_products_pct": 1.719912472647702,
+        "case_pairs_legacy": 9351,
+        "case_pairs_v2": 15340,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 6116,
+        "case_products_legacy": 457,
+        "case_products_v2": 863,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 380
+      }
+    },
+    {
+      "id": 69,
+      "name": "Whites Foodliner",
+      "slug": "whites-foodliner",
+      "unique_products": 858,
+      "unique_pairs": 3212,
+      "unique_stores": 9,
+      "pairs_with_winning_source": 2162,
+      "pairs_with_ai": 2162,
+      "pairs_with_both": 1147,
+      "pairs_ai_only": 1015,
+      "metrics": {
+        "mae": {
+          "n": 1143,
+          "ai_mean": 1.615157742782152,
+          "sales_mean": 2.368561067366579,
+          "ai_median": 1.1371,
+          "sales_median": 1.5196,
+          "mean_diff": -0.7534033245844268,
+          "median_diff": -0.3683999999999998,
+          "ai_win_rate": 0.8127734033245845
+        },
+        "mape": {
+          "n": 1138,
+          "ai_mean": 0.5427408611599297,
+          "sales_mean": 0.8355843585237258,
+          "ai_median": 0.5045999999999999,
+          "sales_median": 0.7349,
+          "mean_diff": -0.2928434973637961,
+          "median_diff": -0.2547,
+          "ai_win_rate": 0.7741652021089631
+        },
+        "r2": {
+          "n": 1137,
+          "ai_mean": -0.4796120492524186,
+          "sales_mean": -1.088987862796834,
+          "ai_median": 0.1348,
+          "sales_median": -0.5743,
+          "mean_diff": 0.6093758135444152,
+          "median_diff": 0.7078,
+          "ai_win_rate": 0.9014951627088831
+        },
+        "rmse": {
+          "n": 1143,
+          "ai_mean": 2.066405599300087,
+          "sales_mean": 3.179890638670166,
+          "ai_median": 1.4243,
+          "sales_median": 2.0758,
+          "mean_diff": -1.113485039370079,
+          "median_diff": -0.5879,
+          "ai_win_rate": 0.8801399825021873
+        },
+        "within2": {
+          "n": 1143,
+          "ai_mean": 0.9945336832895888,
+          "sales_mean": 0.9878233595800524,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.006710323709536308,
+          "median_diff": 0,
+          "ai_win_rate": 0.0752405949256343
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 1166,
+        "v2_pairs": 3212,
+        "delta_pairs": 2046,
+        "delta_pairs_pct": 1.754716981132076,
+        "legacy_products": 229,
+        "v2_products": 858,
+        "delta_products": 629,
+        "delta_products_pct": 2.746724890829694,
+        "case_pairs_legacy": 1166,
+        "case_pairs_v2": 2576,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 636,
+        "case_products_legacy": 229,
+        "case_products_v2": 622,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 236
+      }
+    },
+    {
+      "id": 102,
+      "name": "Hugos",
+      "slug": "hugos",
+      "unique_products": 1261,
+      "unique_pairs": 7635,
+      "unique_stores": 12,
+      "pairs_with_winning_source": 6195,
+      "pairs_with_ai": 6195,
+      "pairs_with_both": 1926,
+      "pairs_ai_only": 4269,
+      "metrics": {
+        "mae": {
+          "n": 1805,
+          "ai_mean": 1.756497008310249,
+          "sales_mean": 2.475020166204986,
+          "ai_median": 0.8129,
+          "sales_median": 1.0842,
+          "mean_diff": -0.7185231578947368,
+          "median_diff": -0.2028000000000001,
+          "ai_win_rate": 0.696398891966759
+        },
+        "mape": {
+          "n": 1744,
+          "ai_mean": 0.553669495412844,
+          "sales_mean": 0.7460229357798166,
+          "ai_median": 0.49895,
+          "sales_median": 0.59935,
+          "mean_diff": -0.1923534403669724,
+          "median_diff": -0.1394,
+          "ai_win_rate": 0.6485091743119266
+        },
+        "r2": {
+          "n": 1729,
+          "ai_mean": -5.905546558704453,
+          "sales_mean": -1.110782475419318,
+          "ai_median": 0.0831,
+          "sales_median": -0.5135,
+          "mean_diff": -4.794764083285136,
+          "median_diff": 0.5842,
+          "ai_win_rate": 0.869866975130133
+        },
+        "rmse": {
+          "n": 1805,
+          "ai_mean": 2.199367590027701,
+          "sales_mean": 3.348123988919668,
+          "ai_median": 1.0198,
+          "sales_median": 1.5038,
+          "mean_diff": -1.148756398891967,
+          "median_diff": -0.3879000000000001,
+          "ai_win_rate": 0.8027700831024931
+        },
+        "within2": {
+          "n": 1805,
+          "ai_mean": 0.9917104155124653,
+          "sales_mean": 0.9768909141274238,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.01481950138504155,
+          "median_diff": 0,
+          "ai_win_rate": 0.1512465373961219
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 1412,
+        "v2_pairs": 7654,
+        "delta_pairs": 6242,
+        "delta_pairs_pct": 4.420679886685552,
+        "legacy_products": 424,
+        "v2_products": 1268,
+        "delta_products": 844,
+        "delta_products_pct": 1.990566037735849,
+        "case_pairs_legacy": 1412,
+        "case_pairs_v2": 5757,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 1897,
+        "case_products_legacy": 424,
+        "case_products_v2": 953,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 315
+      }
+    },
+    {
+      "id": 135,
+      "name": "McCaffreys",
+      "slug": "mccaffreys",
+      "unique_products": 2114,
+      "unique_pairs": 11016,
+      "unique_stores": 8,
+      "pairs_with_winning_source": 8267,
+      "pairs_with_ai": 8267,
+      "pairs_with_both": 4595,
+      "pairs_ai_only": 3672,
+      "metrics": {
+        "mae": {
+          "n": 4534,
+          "ai_mean": 2.356061005734451,
+          "sales_mean": 3.417711998235554,
+          "ai_median": 1.0925,
+          "sales_median": 1.64025,
+          "mean_diff": -1.061650992501103,
+          "median_diff": -0.36175,
+          "ai_win_rate": 0.7940008822232024
+        },
+        "mape": {
+          "n": 4368,
+          "ai_mean": 0.664709249084249,
+          "sales_mean": 0.7712792811355311,
+          "ai_median": 0.48115,
+          "sales_median": 0.6631,
+          "mean_diff": -0.106570032051282,
+          "median_diff": -0.18005,
+          "ai_win_rate": 0.7506868131868132
+        },
+        "r2": {
+          "n": 4365,
+          "ai_mean": -0.4552376632302406,
+          "sales_mean": -2.533616517754868,
+          "ai_median": 0.1149,
+          "sales_median": -0.5195,
+          "mean_diff": 2.078378854524628,
+          "median_diff": 0.6286,
+          "ai_win_rate": 0.8854524627720504
+        },
+        "rmse": {
+          "n": 4534,
+          "ai_mean": 3.169950198500221,
+          "sales_mean": 4.643755734450815,
+          "ai_median": 1.357,
+          "sales_median": 2.1714,
+          "mean_diff": -1.473805535950595,
+          "median_diff": -0.5750500000000001,
+          "ai_win_rate": 0.856859285399206
+        },
+        "within2": {
+          "n": 4534,
+          "ai_mean": 0.9850131451257169,
+          "sales_mean": 0.9767933833259813,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.008219761799735333,
+          "median_diff": 0,
+          "ai_win_rate": 0.1089545655050728
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 3343,
+        "v2_pairs": 11016,
+        "delta_pairs": 7673,
+        "delta_pairs_pct": 2.295243793000299,
+        "legacy_products": 587,
+        "v2_products": 2114,
+        "delta_products": 1527,
+        "delta_products_pct": 2.601362862010221,
+        "case_pairs_legacy": 3343,
+        "case_pairs_v2": 7830,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 3186,
+        "case_products_legacy": 587,
+        "case_products_v2": 1531,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 583
+      }
+    },
+    {
+      "id": 168,
+      "name": "Karns",
+      "slug": "karns",
+      "unique_products": 1677,
+      "unique_pairs": 10115,
+      "unique_stores": 10,
+      "pairs_with_winning_source": 7263,
+      "pairs_with_ai": 7263,
+      "pairs_with_both": 2427,
+      "pairs_ai_only": 4836,
+      "metrics": {
+        "mae": {
+          "n": 2427,
+          "ai_mean": 2.107980304903172,
+          "sales_mean": 3.178401359703338,
+          "ai_median": 0.9796,
+          "sales_median": 1.4176,
+          "mean_diff": -1.070421054800165,
+          "median_diff": -0.3737999999999999,
+          "ai_win_rate": 0.7515451174289246
+        },
+        "mape": {
+          "n": 2382,
+          "ai_mean": 0.5267827455919395,
+          "sales_mean": 0.843794710327456,
+          "ai_median": 0.4731,
+          "sales_median": 0.6453,
+          "mean_diff": -0.3170119647355163,
+          "median_diff": -0.1662,
+          "ai_win_rate": 0.7518891687657431
+        },
+        "r2": {
+          "n": 2289,
+          "ai_mean": -0.6341045434687635,
+          "sales_mean": -2.487132328527741,
+          "ai_median": -0.0787,
+          "sales_median": -0.517,
+          "mean_diff": 1.853027785058977,
+          "median_diff": 0.4313,
+          "ai_win_rate": 0.7225862822193098
+        },
+        "rmse": {
+          "n": 2427,
+          "ai_mean": 2.73528652657602,
+          "sales_mean": 4.217081747012774,
+          "ai_median": 1.2857,
+          "sales_median": 1.8766,
+          "mean_diff": -1.481795220436753,
+          "median_diff": -0.5405000000000002,
+          "ai_win_rate": 0.8014009064688916
+        },
+        "within2": {
+          "n": 2427,
+          "ai_mean": 0.984692088998764,
+          "sales_mean": 0.9754767202307375,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.009215368768026368,
+          "median_diff": 0,
+          "ai_win_rate": 0.1083642356819118
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 2377,
+        "v2_pairs": 10115,
+        "delta_pairs": 7738,
+        "delta_pairs_pct": 3.255363904080774,
+        "legacy_products": 343,
+        "v2_products": 1677,
+        "delta_products": 1334,
+        "delta_products_pct": 3.889212827988338,
+        "case_pairs_legacy": 2377,
+        "case_pairs_v2": 8087,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 2028,
+        "case_products_legacy": 343,
+        "case_products_v2": 1354,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 323
+      }
+    },
+    {
+      "id": 201,
+      "name": "Kirby",
+      "slug": "kirby",
+      "unique_products": 1009,
+      "unique_pairs": 6151,
+      "unique_stores": 13,
+      "pairs_with_winning_source": 5138,
+      "pairs_with_ai": 5138,
+      "pairs_with_both": 2339,
+      "pairs_ai_only": 2799,
+      "metrics": {
+        "mae": {
+          "n": 2339,
+          "ai_mean": 1.41854095767422,
+          "sales_mean": 2.214078110303548,
+          "ai_median": 0.9268,
+          "sales_median": 1.3364,
+          "mean_diff": -0.7955371526293287,
+          "median_diff": -0.3564000000000001,
+          "ai_win_rate": 0.8106028217186833
+        },
+        "mape": {
+          "n": 2217,
+          "ai_mean": 0.5408678845286423,
+          "sales_mean": 0.8348243121335137,
+          "ai_median": 0.4921,
+          "sales_median": 0.688,
+          "mean_diff": -0.2939564276048715,
+          "median_diff": -0.2061000000000001,
+          "ai_win_rate": 0.731168245376635
+        },
+        "r2": {
+          "n": 2214,
+          "ai_mean": -0.585270189701897,
+          "sales_mean": -1.993325835591689,
+          "ai_median": 0.1082,
+          "sales_median": -0.5942000000000001,
+          "mean_diff": 1.408055645889792,
+          "median_diff": 0.6942,
+          "ai_win_rate": 0.9015356820234869
+        },
+        "rmse": {
+          "n": 2339,
+          "ai_mean": 1.793140059854639,
+          "sales_mean": 2.943618939717828,
+          "ai_median": 1.1546,
+          "sales_median": 1.7932,
+          "mean_diff": -1.150478879863189,
+          "median_diff": -0.5820999999999998,
+          "ai_win_rate": 0.8965369816160752
+        },
+        "within2": {
+          "n": 2339,
+          "ai_mean": 0.9973741342454042,
+          "sales_mean": 0.9919208208636168,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.005453313381787088,
+          "median_diff": 0,
+          "ai_win_rate": 0.04574604531851219
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 1882,
+        "v2_pairs": 6151,
+        "delta_pairs": 4269,
+        "delta_pairs_pct": 2.268331562167906,
+        "legacy_products": 248,
+        "v2_products": 1009,
+        "delta_products": 761,
+        "delta_products_pct": 3.068548387096774,
+        "case_pairs_legacy": 1879,
+        "case_pairs_v2": 3437,
+        "unit_pairs_legacy": 3,
+        "unit_pairs_v2": 2714,
+        "case_products_legacy": 247,
+        "case_products_v2": 586,
+        "unit_products_legacy": 1,
+        "unit_products_v2": 423
+      }
+    },
+    {
+      "id": 234,
+      "name": "Kowalskis",
+      "slug": "kowalskis",
+      "unique_products": 1347,
+      "unique_pairs": 10298,
+      "unique_stores": 11,
+      "pairs_with_winning_source": 9005,
+      "pairs_with_ai": 9005,
+      "pairs_with_both": 4316,
+      "pairs_ai_only": 4689,
+      "metrics": {
+        "mae": {
+          "n": 4316,
+          "ai_mean": 2.0378796802595,
+          "sales_mean": 3.073233665430955,
+          "ai_median": 1.1232,
+          "sales_median": 1.5815,
+          "mean_diff": -1.035353985171455,
+          "median_diff": -0.4157,
+          "ai_win_rate": 0.8211306765523633
+        },
+        "mape": {
+          "n": 4066,
+          "ai_mean": 0.5008404328578455,
+          "sales_mean": 0.7881057058534187,
+          "ai_median": 0.4507,
+          "sales_median": 0.6769,
+          "mean_diff": -0.287265272995573,
+          "median_diff": -0.21485,
+          "ai_win_rate": 0.8295622233152976
+        },
+        "r2": {
+          "n": 4066,
+          "ai_mean": -1.168729636005903,
+          "sales_mean": -1.514246606000984,
+          "ai_median": 0.15135,
+          "sales_median": -0.50255,
+          "mean_diff": 0.3455169699950809,
+          "median_diff": 0.63975,
+          "ai_win_rate": 0.91219872110182
+        },
+        "rmse": {
+          "n": 4316,
+          "ai_mean": 2.615681603336423,
+          "sales_mean": 4.079363345690455,
+          "ai_median": 1.4075,
+          "sales_median": 2.0982,
+          "mean_diff": -1.463681742354032,
+          "median_diff": -0.6343000000000001,
+          "ai_win_rate": 0.8820667284522706
+        },
+        "within2": {
+          "n": 4316,
+          "ai_mean": 0.9616299119555143,
+          "sales_mean": 0.9402511816496756,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.02137873030583874,
+          "median_diff": 0,
+          "ai_win_rate": 0.2425857275254866
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 4089,
+        "v2_pairs": 10298,
+        "delta_pairs": 6209,
+        "delta_pairs_pct": 1.518464172169234,
+        "legacy_products": 514,
+        "v2_products": 1347,
+        "delta_products": 833,
+        "delta_products_pct": 1.620622568093385,
+        "case_pairs_legacy": 4074,
+        "case_pairs_v2": 9056,
+        "unit_pairs_legacy": 15,
+        "unit_pairs_v2": 1242,
+        "case_products_legacy": 510,
+        "case_products_v2": 1166,
+        "unit_products_legacy": 4,
+        "unit_products_v2": 181
+      }
+    },
+    {
+      "id": 267,
+      "name": "Naifehs",
+      "slug": "naifehs",
+      "unique_products": 464,
+      "unique_pairs": 635,
+      "unique_stores": 2,
+      "pairs_with_winning_source": 516,
+      "pairs_with_ai": 516,
+      "pairs_with_both": 251,
+      "pairs_ai_only": 265,
+      "metrics": {
+        "mae": {
+          "n": 251,
+          "ai_mean": 2.495931075697212,
+          "sales_mean": 3.251447011952191,
+          "ai_median": 1.2019,
+          "sales_median": 1.6893,
+          "mean_diff": -0.75551593625498,
+          "median_diff": -0.4197,
+          "ai_win_rate": 0.8764940239043825
+        },
+        "mape": {
+          "n": 247,
+          "ai_mean": 0.5290461538461539,
+          "sales_mean": 0.9428910931174089,
+          "ai_median": 0.4679,
+          "sales_median": 0.7588,
+          "mean_diff": -0.4138449392712551,
+          "median_diff": -0.2817,
+          "ai_win_rate": 0.8663967611336032
+        },
+        "r2": {
+          "n": 245,
+          "ai_mean": -0.379634693877551,
+          "sales_mean": -2.37859224489796,
+          "ai_median": 0.1554,
+          "sales_median": -0.5471,
+          "mean_diff": 1.998957551020408,
+          "median_diff": 0.72,
+          "ai_win_rate": 0.9469387755102041
+        },
+        "rmse": {
+          "n": 251,
+          "ai_mean": 3.188805577689243,
+          "sales_mean": 4.267347410358566,
+          "ai_median": 1.5408,
+          "sales_median": 2.2922,
+          "mean_diff": -1.078541832669323,
+          "median_diff": -0.5768999999999997,
+          "ai_win_rate": 0.8924302788844621
+        },
+        "within2": {
+          "n": 251,
+          "ai_mean": 0.9693059760956175,
+          "sales_mean": 0.94738406374502,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.02192191235059761,
+          "median_diff": 0,
+          "ai_win_rate": 0.1673306772908366
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 287,
+        "v2_pairs": 635,
+        "delta_pairs": 348,
+        "delta_pairs_pct": 1.212543554006969,
+        "legacy_products": 208,
+        "v2_products": 464,
+        "delta_products": 256,
+        "delta_products_pct": 1.230769230769231,
+        "case_pairs_legacy": 287,
+        "case_pairs_v2": 467,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 168,
+        "case_products_legacy": 208,
+        "case_products_v2": 339,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 125
+      }
+    },
+    {
+      "id": 300,
+      "name": "Kimberton",
+      "slug": "kimberton",
+      "unique_products": 598,
+      "unique_pairs": 2769,
+      "unique_stores": 7,
+      "pairs_with_winning_source": 2213,
+      "pairs_with_ai": 2213,
+      "pairs_with_both": 1459,
+      "pairs_ai_only": 754,
+      "metrics": {
+        "mae": {
+          "n": 1437,
+          "ai_mean": 2.552380723729993,
+          "sales_mean": 3.870562769659011,
+          "ai_median": 1.5832,
+          "sales_median": 2.2855,
+          "mean_diff": -1.318182045929019,
+          "median_diff": -0.6734000000000002,
+          "ai_win_rate": 0.9018789144050104
+        },
+        "mape": {
+          "n": 1422,
+          "ai_mean": 0.509929746835443,
+          "sales_mean": 0.7678962025316456,
+          "ai_median": 0.45605,
+          "sales_median": 0.6869000000000001,
+          "mean_diff": -0.2579664556962025,
+          "median_diff": -0.213,
+          "ai_win_rate": 0.8438818565400844
+        },
+        "r2": {
+          "n": 1422,
+          "ai_mean": -0.3594862165963432,
+          "sales_mean": -0.6664740506329114,
+          "ai_median": 0.18495,
+          "sales_median": -0.45775,
+          "mean_diff": 0.3069878340365682,
+          "median_diff": 0.63005,
+          "ai_win_rate": 0.9142053445850914
+        },
+        "rmse": {
+          "n": 1437,
+          "ai_mean": 3.253962491301322,
+          "sales_mean": 5.118260751565762,
+          "ai_median": 1.9635,
+          "sales_median": 2.992,
+          "mean_diff": -1.86429826026444,
+          "median_diff": -0.9481000000000002,
+          "ai_win_rate": 0.9380654140570633
+        },
+        "within2": {
+          "n": 1437,
+          "ai_mean": 0.9902796798886568,
+          "sales_mean": 0.9805503131524008,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.009729366736256087,
+          "median_diff": 0,
+          "ai_win_rate": 0.1203897007654837
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 1489,
+        "v2_pairs": 2769,
+        "delta_pairs": 1280,
+        "delta_pairs_pct": 0.8596373404969778,
+        "legacy_products": 299,
+        "v2_products": 598,
+        "delta_products": 299,
+        "delta_products_pct": 1,
+        "case_pairs_legacy": 1489,
+        "case_pairs_v2": 2680,
+        "unit_pairs_legacy": 0,
+        "unit_pairs_v2": 89,
+        "case_products_legacy": 299,
+        "case_products_v2": 579,
+        "unit_products_legacy": 0,
+        "unit_products_v2": 19
+      }
+    },
+    {
+      "id": 333,
+      "name": "Sunshine",
+      "slug": "sunshine",
+      "unique_products": 353,
+      "unique_pairs": 353,
+      "unique_stores": 1,
+      "pairs_with_winning_source": 208,
+      "pairs_with_ai": 208,
+      "pairs_with_both": 90,
+      "pairs_ai_only": 118,
+      "metrics": {
+        "mae": {
+          "n": 89,
+          "ai_mean": 2.000249438202247,
+          "sales_mean": 2.640540449438202,
+          "ai_median": 1.27,
+          "sales_median": 1.6651,
+          "mean_diff": -0.640291011235955,
+          "median_diff": -0.3454999999999999,
+          "ai_win_rate": 0.7078651685393258
+        },
+        "mape": {
+          "n": 89,
+          "ai_mean": 0.5799325842696629,
+          "sales_mean": 0.8599044943820225,
+          "ai_median": 0.5146,
+          "sales_median": 0.727,
+          "mean_diff": -0.2799719101123595,
+          "median_diff": -0.2218,
+          "ai_win_rate": 0.7640449438202247
+        },
+        "r2": {
+          "n": 87,
+          "ai_mean": -0.4269850574712645,
+          "sales_mean": -1.545003448275862,
+          "ai_median": -0.0971,
+          "sales_median": -0.5972,
+          "mean_diff": 1.118018390804598,
+          "median_diff": 0.707,
+          "ai_win_rate": 0.7471264367816092
+        },
+        "rmse": {
+          "n": 89,
+          "ai_mean": 2.60745393258427,
+          "sales_mean": 3.743431460674157,
+          "ai_median": 1.6732,
+          "sales_median": 2.1573,
+          "mean_diff": -1.135977528089888,
+          "median_diff": -0.6713,
+          "ai_win_rate": 0.7865168539325843
+        },
+        "within2": {
+          "n": 89,
+          "ai_mean": 0.9947831460674156,
+          "sales_mean": 0.9937707865168539,
+          "ai_median": 1,
+          "sales_median": 1,
+          "mean_diff": 0.001012359550561799,
+          "median_diff": 0,
+          "ai_win_rate": 0.07865168539325842
+        }
+      },
+      "legacy_v2": {
+        "legacy_pairs": 109,
+        "v2_pairs": 353,
+        "delta_pairs": 244,
+        "delta_pairs_pct": 2.238532110091743,
+        "legacy_products": 109,
+        "v2_products": 353,
+        "delta_products": 244,
+        "delta_products_pct": 2.238532110091743,
+        "case_pairs_legacy": 108,
+        "case_pairs_v2": 267,
+        "unit_pairs_legacy": 1,
+        "unit_pairs_v2": 86,
+        "case_products_legacy": 108,
+        "case_products_v2": 267,
+        "unit_products_legacy": 1,
+        "unit_products_v2": 86
+      }
+    }
+  ]
+}
