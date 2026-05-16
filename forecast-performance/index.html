@@ -10,27 +10,35 @@
 </head>
 <body>
 <div class="app">
-  <aside>
+  <aside id="sidebar">
     <div class="brand">
       <img src="assets/logo-wide-white.svg" alt="EmpowerFresh">
       <div class="brand-sub">Forecast Performance Report · 2026-05-16</div>
     </div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar-nav">
+      <span class="menu-toggle-label">Menu</span>
+      <span class="menu-toggle-icon" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </button>
 
-    <div class="nav-section">Overview</div>
-    <a class="nav-item active" href="#headline">Headline</a>
-    <a class="nav-item" href="#overall">Overall win rates</a>
-    <a class="nav-item" href="#coverage">Coverage expansion (V2)</a>
+    <div class="nav-body" id="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <a class="nav-item active" href="#headline">Headline</a>
+      <a class="nav-item" href="#overall">Overall win rates</a>
+      <a class="nav-item" href="#coverage">Coverage expansion (V2)</a>
 
-    <div class="nav-section">Detail</div>
-    <a class="nav-item" href="#per-customer">Per-customer summary</a>
-    <a class="nav-item" href="#charts">Per-customer charts</a>
-    <a class="nav-item" href="#full-table">Full metrics table</a>
+      <div class="nav-section">Detail</div>
+      <a class="nav-item" href="#per-customer">Per-customer summary</a>
+      <a class="nav-item" href="#charts">Per-customer charts</a>
+      <a class="nav-item" href="#full-table">Full metrics table</a>
 
-    <div class="nav-section">Customer reports</div>
-    <div id="cust-nav"></div>
+      <div class="nav-section">Customer reports</div>
+      <div id="cust-nav"></div>
 
-    <div class="nav-section">Downloads</div>
-    <a class="nav-item" href="#downloads">All files</a>
+      <div class="nav-section">Downloads</div>
+      <a class="nav-item" href="#downloads">All files</a>
+    </div>
   </aside>
 
   <main>
