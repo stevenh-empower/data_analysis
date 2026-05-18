@@ -34,10 +34,25 @@ const METRIC_DESCRIPTIONS = {
 
 let DATA = null;
 
+function fillMeta() {
+  const asOf = DATA.as_of || DATA.generated_at || '';
+  const gen = document.getElementById('generated-at');
+  const brand = document.getElementById('brand-asof');
+  const footer = document.getElementById('footer-asof');
+  const stores = document.getElementById('meta-stores');
+  const pairs = document.getElementById('meta-pairs');
+  if (gen) gen.textContent = asOf;
+  if (brand) brand.textContent = asOf;
+  if (footer) footer.textContent = asOf;
+  if (stores) stores.textContent = fmt.int(DATA.overall.unique_stores);
+  if (pairs) pairs.textContent = fmt.int(DATA.overall.unique_pairs);
+}
+
 async function init() {
   const res = await fetch('data.json');
   DATA = await res.json();
 
+  fillMeta();
   buildSidebarNav();
   buildHeadlineCards();
   buildOverallTable();

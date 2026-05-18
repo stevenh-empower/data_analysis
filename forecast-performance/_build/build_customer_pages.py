@@ -24,7 +24,7 @@ TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="who">
       <div class="name">{name}</div>
-      <div class="what">Produce forecasting update · May 2026</div>
+      <div class="what">Produce forecasting snapshot · {as_of}</div>
     </div>
   </div>
 
@@ -51,8 +51,8 @@ TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="card">
       <div class="number">{error_drop_pct}</div>
-      <div class="label">Average forecast miss reduced</div>
-      <div class="sub">cases per item, per day</div>
+      <div class="label">Average forecast accuracy improved</div>
+      <div class="sub">smaller miss per item, per day</div>
     </div>
   </div>
 
@@ -115,7 +115,7 @@ TEMPLATE = """<!DOCTYPE html>
   </div>
 
   <div class="footer-note">
-    EmpowerFresh · Forecast performance update · 2026-05-16
+    EmpowerFresh · Forecast performance snapshot · {as_of}
   </div>
 </div>
 </body>
@@ -145,6 +145,7 @@ for c in DATA['customers']:
         'name': html.escape(c['name']),
         'name_short': html.escape(c['name']),
         'slug': c['slug'],
+        'as_of': DATA.get('as_of') or DATA.get('generated_at', ''),
         'v2_pairs_fmt': f_int(lv.get('v2_pairs') or c['unique_pairs']),
         'legacy_pairs_fmt': f_int(lv.get('legacy_pairs', 0)),
         'pairs_growth_pct': f_pct_growth(lv.get('delta_pairs_pct', 0)),
@@ -152,7 +153,7 @@ for c in DATA['customers']:
         'stores': c['unique_stores'],
         'store_label': 'store' if c['unique_stores'] == 1 else 'stores',
         'ai_win_mae': f_pct(m['mae']['ai_win_rate']),
-        'error_drop_pct': f"−{err_drop*100:.0f}%",
+        'error_drop_pct': f"{err_drop*100:.0f}%",
         'delta_pairs_fmt': f_int(lv.get('delta_pairs', 0)),
         'unit_pairs_v2_fmt': f_int(lv.get('unit_pairs_v2', 0)),
         'within2': f_pct(m['within2']['ai_mean']),
