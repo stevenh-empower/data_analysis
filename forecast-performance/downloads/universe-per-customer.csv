@@ -1,13 +1,13 @@
 customer_id,customer_name,unique_products,unique_pairs,pairs_with_winning_source,unique_stores
-4,Rays,712,2259,1638,6
-5,Pruetts,1056,5559,4095,11
-36,Lowes,1183,20285,14065,68
-69,Whites Foodliner,858,3212,2162,9
-102,Hugos,1261,7635,6195,12
-135,McCaffreys,2114,11016,8267,8
-168,Karns,1677,10115,7263,10
-201,Kirby,1009,6151,5138,13
-234,Kowalskis,1347,10298,9005,11
-267,Naifehs,464,635,516,2
-300,Kimberton,598,2769,2213,7
-333,Sunshine,353,353,208,1
+4,Rays,505,1614,1614,6
+5,Pruetts,622,3483,3483,11
+36,Lowes,722,18613,18613,68
+69,Whites Foodliner,591,5087,5087,9
+102,Hugos,742,5327,5327,12
+135,McCaffreys,1016,5949,5949,8
+168,Karns,620,4321,4321,10
+201,Kirby,538,3901,3901,13
+234,Kowalskis,674,5242,5242,11
+267,Naifehs,299,421,421,2
+300,Kimberton,297,1560,1560,7
+333,Sunshine,162,169,169,1

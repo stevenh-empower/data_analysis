@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Forecast Performance — AI vs Legacy · 2026-05-16</title>
+  <title>Forecast Performance — AI vs Legacy</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -13,7 +13,7 @@
   <aside id="sidebar">
     <div class="brand">
       <img src="assets/logo-wide-white.svg" alt="EmpowerFresh">
-      <div class="brand-sub">Forecast Performance Report · 2026-05-16</div>
+      <div class="brand-sub">Forecast Performance Report · <span id="brand-asof">—</span></div>
     </div>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar-nav">
       <span class="menu-toggle-label">Menu</span>
@@ -44,8 +44,8 @@
   <main>
     <header class="page-header">
       <h1>Forecast Performance: AI vs Legacy</h1>
-      <p class="lede">Head-to-head accuracy of the new AI demand forecasting (V2) vs the legacy daily-sales forecast — measured on the same (store, product) pairs over the last 60 days.</p>
-      <div class="meta">Run · <strong>2026-05-16</strong> · 12 grocers · 158 stores · 60,765 (store, product) pairs · source: <code>analysis_product_sales_performance</code> + <code>analysis_product_demand</code></div>
+      <p class="lede">Current orderable snapshot: head-to-head accuracy of the new AI demand forecasting (V2) vs the legacy daily-sales forecast, restricted to the (store, product) pairs that are active in each customer's order guide today and have a forecast passing the CAO v2 quality gates.</p>
+      <div class="meta">Snapshot · <strong id="generated-at">—</strong> · 12 grocers · <span id="meta-stores">—</span> stores · <span id="meta-pairs">—</span> orderable pairs · source: <code>order_guide_master_item</code> × <code>forecast_priority</code> (winning model) on <code>ai_forecast_performance</code> vs <code>analysis_product_sales_performance</code></div>
     </header>
 
     <!-- HEADLINE -->
@@ -203,7 +203,7 @@
     </section>
 
     <div class="footer-note">
-      <a href="../">data_analysis</a> · generated 2026-05-16
+      <a href="../">data_analysis</a> · generated <span id="footer-asof">—</span>
     </div>
   </main>
 </div>
